@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>綿綿泡芙的單字大對決！Pokemon English Battle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', 'DFKai-SB', sans-serif;
+      background: radial-gradient(circle at 50% 15%, #ffe4e6 0%, #fbcfe8 45%, #c084fc 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Standard horizontal ruby styling for clear, non-inverted Bopomofo above characters */
+    ruby {
+      ruby-position: over;
+      ruby-align: center;
+      display: inline-ruby;
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'DFKai-SB', sans-serif;
+      line-height: 1.6;
+    }
+
+    rt {
+      font-size: 0.52em;
+      letter-spacing: 0.5px;
+      color: #334155;
+      font-weight: 700;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .retro-box {
+      background: #ffffff;
+      border: 4px solid #334155;
+      box-shadow: 0 8px 0px #1e293b, 0 16px 20px rgba(0,0,0,0.15);
+      border-radius: 22px;
+    }
+
+    .hp-bar-fill {
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Pokemon Animations */
+    @keyframes floatPet {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(2deg); }
+    }
+
+    @keyframes idleOpponent {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-5px) scale(1.02); }
+    }
+
+    @keyframes fairyAttackAnim {
+      0% { transform: translateX(0) scale(1); }
+      25% { transform: translateX(-25px) scale(0.92); }
+      60% { transform: translateX(85px) scale(1.2) rotate(14deg); }
+      100% { transform: translateX(0) scale(1) rotate(0deg); }
+    }
+
+    @keyframes hitHurtAnim {
+      0%, 100% { transform: translateX(0); filter: brightness(1); }
+      20% { transform: translateX(-14px); filter: brightness(2) drop-shadow(0 0 10px red); }
+      40% { transform: translateX(14px); }
+      60% { transform: translateX(-8px); }
+      80% { transform: translateX(8px); }
+    }
+
+    @keyframes faintAnim {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      50% { transform: translateY(25px) rotate(25deg); opacity: 0.6; }
+      100% { transform: translateY(110px) scale(0.2); opacity: 0; }
+    }
+
+    .player-float { animation: floatPet 2.5s ease-in-out infinite; }
+    .opponent-idle { animation: idleOpponent 3s ease-in-out infinite; }
+    .anim-attack { animation: fairyAttackAnim 0.6s ease-out forwards; }
+    .anim-hurt { animation: hitHurtAnim 0.6s ease-out forwards; }
+    .anim-faint { animation: faintAnim 0.7s ease-in forwards; }
+
+    .word-svg-preview {
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .word-svg-preview:hover {
+      transform: scale(1.08) rotate(3deg);
+    }
+
+    .pic-card-option {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 3px solid #e2e8f0;
+    }
+    .pic-card-option:hover {
+      border-color: #ec4899;
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 15px -3px rgba(236, 72, 153, 0.3);
+    }
+    .pic-card-option:active {
+      transform: translateY(1px) scale(0.98);
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 flex flex-col items-center justify-start text-slate-800">
+
+  <div class="w-full max-w-xl flex flex-col gap-3">
+
+    <!-- Top Status Bar -->
+    <header class="bg-white/95 backdrop-blur border-3 border-pink-400 rounded-2xl p-3 shadow-md flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🏆</span>
+        <div>
+          <div class="text-xs text-slate-500 font-bold">
+            <ruby>擊<rt>ㄐㄧˊ</rt></ruby><ruby>倒<rt>ㄉㄠˇ</rt></ruby><ruby>寶<rt>ㄅㄠˇ</rt></ruby><ruby>可<rt>ㄎㄜˇ</rt></ruby><ruby>夢<rt>ㄇㄥˋ</rt></ruby>
+          </div>
+          <div id="defeat-count" class="text-lg font-black text-pink-600">0 隻</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🔥</span>
+        <div>
+          <div class="text-xs text-slate-500 font-bold">
+            <ruby>連<rt>ㄌㄧㄢˊ</rt></ruby><ruby>續<rt>ㄒㄩˋ</rt></ruby><ruby>答<rt>ㄉㄚˊ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby>
+          </div>
+          <div id="streak-count" class="text-lg font-black text-amber-500">0 題</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">⭐</span>
+        <div>
+          <div class="text-xs text-slate-500 font-bold">
+            <ruby>經<rt>ㄐㄧㄥ</rt></ruby><ruby>驗<rt>ㄧㄢˋ</rt></ruby><ruby>值<rt>ㄓˊ</rt></ruby>
+          </div>
+          <div id="score-count" class="text-lg font-black text-indigo-600">0 EXP</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Buttons -->
+    <nav class="flex gap-2 justify-center">
+      <button id="nav-quiz" onclick="switchMode('quiz')" class="flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-pink-500 bg-pink-500 text-white shadow-sm transition hover:scale-105 active:scale-95">
+        <ruby>看<rt>ㄎㄢˋ</rt></ruby><ruby>圖<rt>ㄊㄨˊ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby><ruby>字<rt>ㄗˋ</rt></ruby>
+      </button>
+      <button id="nav-listen" onclick="switchMode('listen')" class="flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-indigo-500 bg-white text-indigo-600 shadow-sm transition hover:scale-105 active:scale-95">
+        <ruby>聽<rt>ㄊㄧㄥ</rt></ruby><ruby>音<rt>ㄧㄣ</rt></ruby><ruby>猜<rt>ㄘㄞ</rt></ruby><ruby>圖<rt>ㄊㄨˊ</rt></ruby>
+      </button>
+      <button id="nav-spell" onclick="switchMode('spell')" class="flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-purple-500 bg-white text-purple-600 shadow-sm transition hover:scale-105 active:scale-95">
+        <ruby>拼<rt>ㄆㄧㄣ</rt></ruby><ruby>字<rt>ㄗˋ</rt></ruby><ruby>攻<rt>ㄍㄨㄥ</rt></ruby><ruby>擊<rt>ㄐㄧˊ</rt></ruby>
+      </button>
+    </nav>
+
+    <!-- Pokemon Arena -->
+    <div class="relative retro-box p-3 sm:p-4 overflow-hidden bg-gradient-to-b from-sky-200 via-emerald-100 to-green-200 min-h-[220px]">
+      
+      <div class="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-emerald-400 to-emerald-200 rounded-b-2xl border-t-4 border-emerald-500/50"></div>
+      
+      <!-- OPPONENT (Top Right) -->
+      <div class="relative flex justify-end items-start mb-4 z-10">
+        <div class="bg-white/95 border-2 border-slate-700 rounded-xl p-2 px-3 shadow-md w-44 sm:w-48 text-left mr-2">
+          <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+            <span id="opponent-name">皮卡丘</span>
+            <span class="text-pink-500">Lv.12</span>
+          </div>
+          <div class="flex items-center gap-1 mt-1">
+            <span class="text-[10px] font-black bg-amber-400 px-1 rounded text-amber-900">HP</span>
+            <div class="flex-1 h-3 bg-slate-200 rounded-full border border-slate-400 overflow-hidden">
+              <div id="opponent-hp-bar" class="hp-bar-fill h-full bg-emerald-500 w-full"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
+          <div class="absolute -bottom-2 w-20 h-7 bg-emerald-700/30 rounded-[100%] blur-[2px]"></div>
+          <img id="opponent-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Opponent Pokemon" class="w-full h-full object-contain opponent-idle relative z-10 filter drop-shadow-md" />
+        </div>
+      </div>
+
+      <!-- PLAYER: 綿綿泡芙 (Bottom Left) -->
+      <div class="relative flex justify-start items-end z-10 mt-1">
+        <div class="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center ml-2">
+          <div class="absolute -bottom-2 w-24 h-8 bg-emerald-700/30 rounded-[100%] blur-[2px]"></div>
+          <img id="player-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/684.png" alt="綿綿泡芙" class="w-full h-full object-contain player-float relative z-10 filter drop-shadow-lg" />
+          <div id="attack-fx" class="absolute pointer-events-none text-4xl hidden z-20">✨💖✨</div>
+        </div>
+
+        <div class="bg-white/95 border-2 border-pink-400 rounded-xl p-2 px-3 shadow-md w-48 sm:w-52 text-left ml-2 mb-2">
+          <div class="flex justify-between items-center text-xs font-black text-pink-700">
+            <span><ruby>綿<rt>ㄇㄧㄢˊ</rt></ruby><ruby>綿<rt>ㄇㄧㄢˊ</rt></ruby><ruby>泡<rt>ㄆㄠˋ</rt></ruby><ruby>芙<rt>ㄈㄨˊ</rt></ruby></span>
+            <span class="text-indigo-600 font-bold">Lv.25</span>
+          </div>
+          <div class="flex items-center gap-1 mt-1">
+            <span class="text-[10px] font-black bg-pink-400 px-1 rounded text-white">HP</span>
+            <div class="flex-1 h-3 bg-slate-200 rounded-full border border-slate-400 overflow-hidden">
+              <div id="player-hp-bar" class="hp-bar-fill h-full bg-emerald-500 w-full"></div>
+            </div>
+          </div>
+          <div class="text-[10px] text-right font-bold text-slate-500 mt-0.5" id="hp-numbers">100 / 100</div>
+        </div>
+      </div>
+
+      <div id="battle-msg" class="relative z-10 mt-2 bg-slate-900/90 text-white font-bold p-2.5 rounded-xl border-2 border-slate-700 text-sm tracking-wide text-center min-h-[42px] flex items-center justify-center">
+        野生的皮卡丘出現了！請選擇正確答案發動攻擊！
+      </div>
+    </div>
+
+    <!-- Question & Practice Box -->
+    <div class="retro-box p-4 bg-white flex flex-col items-center">
+      
+      <div class="w-full flex items-center justify-between mb-2">
+        <span id="cat-badge" class="px-3 py-1 bg-pink-100 text-pink-700 font-bold rounded-full text-xs sm:text-sm border border-pink-300">
+          <ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>
+        </span>
+        <button id="main-voice-btn" onclick="playCurrentWordAudio()" class="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-full font-bold text-xs sm:text-sm border border-indigo-200 transition active:scale-95">
+          <span>🔊</span> <ruby>聽<rt>ㄊㄧㄥ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>音<rt>ㄧㄣ</rt></ruby>
+        </button>
+      </div>
+
+      <div id="prompt-container" class="w-full flex flex-col items-center justify-center my-1 py-2 bg-slate-50 border border-slate-200 rounded-2xl min-h-[140px]">
+        <div id="prompt-svg-wrap" class="w-24 h-24 mb-2 flex items-center justify-center"></div>
+        <div id="prompt-text" class="text-2xl sm:text-3xl font-black text-slate-800 tracking-wider"></div>
+      </div>
+
+      <!-- Option Containers -->
+      <div id="quiz-choices-wrap" class="w-full grid grid-cols-2 gap-3 mt-3"></div>
+      <div id="listen-choices-wrap" class="w-full grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 hidden"></div>
+
+      <!-- Spelling Input -->
+      <div id="spell-input-wrap" class="w-full flex flex-col items-center gap-2 mt-3 hidden">
+        <input type="text" id="spell-input" autofocus autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="請輸入英文單字..." class="w-full max-w-xs text-center text-2xl font-black tracking-widest text-slate-800 border-3 border-indigo-300 focus:border-pink-500 rounded-xl py-2 px-4 outline-none transition uppercase shadow-inner" />
+        <button onclick="checkSpelling()" class="px-8 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-black text-lg rounded-xl shadow-md hover:brightness-110 active:scale-95 transition">
+          💥 <ruby>發<rt>ㄈㄚ</rt></ruby><ruby>動<rt>ㄉㄨㄥˋ</rt></ruby><ruby>攻<rt>ㄍㄨㄥ</rt></ruby><ruby>擊<rt>ㄐㄧˊ</rt></ruby>！
+        </button>
+      </div>
+
+      <div id="feedback-area" class="h-8 mt-2 text-base sm:text-lg font-black flex items-center justify-center"></div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const SVG_LIB = {
+      pen: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <defs><linearGradient id="penG" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient></defs>
+        <rect x="42" y="15" width="16" height="55" rx="5" fill="url(#penG)"/>
+        <polygon points="42,70 58,70 50,92" fill="#94a3b8"/>
+        <polygon points="48,85 52,85 50,94" fill="#0f172a"/>
+        <rect x="40" y="25" width="20" height="6" rx="2" fill="#cbd5e1"/>
+        <path d="M40 28 Q30 35 38 52" stroke="#64748b" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <circle cx="50" cy="20" r="4" fill="#e2e8f0"/>
+      </svg>`,
+      pencil: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <polygon points="40,25 60,25 60,70 40,70" fill="#f59e0b"/>
+        <polygon points="40,70 60,70 50,90" fill="#fed7aa"/>
+        <polygon points="48,84 52,84 50,91" fill="#1e293b"/>
+        <rect x="40" y="12" width="20" height="13" rx="3" fill="#f43f5e"/>
+        <rect x="40" y="22" width="20" height="5" fill="#cbd5e1"/>
+        <line x1="47" y1="27" x2="47" y2="68" stroke="#d97706" stroke-width="2"/>
+        <line x1="53" y1="27" x2="53" y2="68" stroke="#d97706" stroke-width="2"/>
+      </svg>`,
+      book: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <path d="M20 75 Q50 65 50 25 Q50 65 80 75 L80 30 Q50 20 50 15 Q50 20 20 30 Z" fill="#ef4444"/>
+        <path d="M22 72 Q50 62 50 24 L50 26 Q50 64 80 74 L78 32 Q50 23 50 17 Q50 23 22 32 Z" fill="#ffffff"/>
+        <path d="M20 75 Q50 65 50 25 L50 78 Q50 68 20 78 Z" fill="#dc2626"/>
+        <path d="M50 25 Q50 65 80 75 L80 78 Q50 68 50 25 Z" fill="#b91c1c"/>
+      </svg>`,
+      notebook: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <rect x="25" y="18" width="55" height="66" rx="8" fill="#0284c7"/>
+        <rect x="36" y="26" width="38" height="50" rx="4" fill="#f8fafc"/>
+        <line x1="42" y1="36" x2="68" y2="36" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+        <line x1="42" y1="46" x2="68" y2="46" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+        <line x1="42" y1="56" x2="64" y2="56" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="25" cy="28" r="4" fill="#334155"/>
+        <circle cx="25" cy="40" r="4" fill="#334155"/>
+        <circle cx="25" cy="52" r="4" fill="#334155"/>
+        <circle cx="25" cy="64" r="4" fill="#334155"/>
+        <circle cx="25" cy="74" r="4" fill="#334155"/>
+      </svg>`,
+      eraser: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <g transform="rotate(-20 50 50)">
+          <path d="M30 35 L70 35 L70 65 L30 65 Z" fill="#3b82f6" rx="4"/>
+          <path d="M15 35 L35 35 L35 65 L15 65 Q10 65 10 50 Q10 35 15 35 Z" fill="#f43f5e"/>
+          <rect x="30" y="35" width="28" height="30" fill="#2563eb"/>
+          <text x="36" y="54" fill="#ffffff" font-size="10" font-weight="bold">ER</text>
+        </g>
+      </svg>`,
+      ruler: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <g transform="rotate(-35 50 50)">
+          <rect x="15" y="42" width="70" height="18" rx="4" fill="#ef4444" stroke="#b91c1c" stroke-width="2"/>
+          <line x1="25" y1="42" x2="25" y2="50" stroke="#ffffff" stroke-width="2"/>
+          <line x1="32" y1="42" x2="32" y2="47" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="39" y1="42" x2="39" y2="50" stroke="#ffffff" stroke-width="2"/>
+          <line x1="46" y1="42" x2="46" y2="47" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="53" y1="42" x2="53" y2="50" stroke="#ffffff" stroke-width="2"/>
+          <line x1="60" y1="42" x2="60" y2="47" stroke="#ffffff" stroke-width="1.5"/>
+          <line x1="67" y1="42" x2="67" y2="50" stroke="#ffffff" stroke-width="2"/>
+          <line x1="74" y1="42" x2="74" y2="47" stroke="#ffffff" stroke-width="1.5"/>
+        </g>
+      </svg>`,
+      folder: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <path d="M15 30 L40 30 L48 38 L85 38 Q88 38 88 42 L88 75 Q88 79 84 79 L16 79 Q12 79 12 75 L12 34 Q12 30 15 30 Z" fill="#f59e0b"/>
+        <path d="M12 45 L88 45 L84 78 L16 78 Z" fill="#fbbf24"/>
+        <rect x="25" y="32" width="40" height="18" rx="2" fill="#ffffff" opacity="0.9"/>
+      </svg>`,
+      backpack: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <path d="M30 35 Q50 15 70 35 L75 80 Q75 85 70 85 L30 85 Q25 85 25 80 Z" fill="#eab308"/>
+        <rect x="33" y="55" width="34" height="24" rx="5" fill="#ca8a04"/>
+        <circle cx="50" cy="42" r="6" fill="#713f12"/>
+        <path d="M40 22 Q50 12 60 22" stroke="#475569" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <rect x="42" y="60" width="16" height="3" rx="1.5" fill="#fef08a"/>
+      </svg>`,
+      board: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <rect x="12" y="22" width="76" height="52" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="5"/>
+        <rect x="18" y="28" width="64" height="40" fill="#ffffff"/>
+        <line x1="26" y1="74" x2="74" y2="74" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+        <rect x="48" y="70" width="14" height="4" fill="#3b82f6" rx="1"/>
+      </svg>`,
+      marker: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <g transform="rotate(30 50 50)">
+          <rect x="42" y="28" width="16" height="50" rx="3" fill="#10b981"/>
+          <rect x="40" y="24" width="20" height="8" rx="2" fill="#047857"/>
+          <polygon points="44,24 56,24 50,14" fill="#065f46"/>
+          <rect x="42" y="66" width="16" height="12" fill="#059669"/>
+        </g>
+      </svg>`,
+      computer: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <rect x="16" y="20" width="68" height="46" rx="5" fill="#334155"/>
+        <rect x="20" y="24" width="60" height="38" rx="2" fill="#38bdf8"/>
+        <polygon points="44,66 56,66 60,78 40,78" fill="#94a3b8"/>
+        <rect x="34" y="78" width="32" height="5" rx="2.5" fill="#64748b"/>
+      </svg>`,
+      globe: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <circle cx="50" cy="44" r="26" fill="#38bdf8"/>
+        <path d="M40 30 Q48 35 44 48 Q35 44 32 36 Z" fill="#22c55e"/>
+        <path d="M54 40 Q68 44 64 56 Q52 58 50 48 Z" fill="#22c55e"/>
+        <path d="M24 44 A 26 26 0 0 0 68 68" stroke="#a855f7" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <line x1="50" y1="70" x2="50" y2="82" stroke="#6b21a8" stroke-width="6"/>
+        <rect x="36" y="82" width="28" height="6" rx="3" fill="#6b21a8"/>
+      </svg>`,
+      desk: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <polygon points="12,38 88,38 82,48 18,48" fill="#b45309"/>
+        <rect x="18" y="48" width="64" height="10" fill="#92400e"/>
+        <rect x="22" y="58" width="6" height="26" fill="#78350f"/>
+        <rect x="72" y="58" width="6" height="26" fill="#78350f"/>
+        <rect x="28" y="58" width="44" height="4" fill="#a16207"/>
+      </svg>`,
+      chair: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <rect x="32" y="18" width="36" height="18" rx="3" fill="#2563eb"/>
+        <rect x="30" y="50" width="40" height="8" rx="2" fill="#1d4ed8"/>
+        <line x1="36" y1="36" x2="36" y2="50" stroke="#64748b" stroke-width="4"/>
+        <line x1="64" y1="36" x2="64" y2="50" stroke="#64748b" stroke-width="4"/>
+        <line x1="34" y1="58" x2="30" y2="84" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+        <line x1="66" y1="58" x2="70" y2="84" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+      </svg>`,
+      circle: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <circle cx="50" cy="50" r="36" fill="#facc15" stroke="#eab308" stroke-width="4"/>
+        <circle cx="42" cy="42" r="28" fill="#fef08a" opacity="0.6"/>
+      </svg>`,
+      triangle: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <polygon points="50,18 86,80 14,80" fill="#2dd4bf" stroke="#0d9488" stroke-width="4" stroke-linejoin="round"/>
+        <polygon points="50,28 78,76 22,76" fill="#99f6e4" opacity="0.6"/>
+      </svg>`,
+      rectangle: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <rect x="15" y="30" width="70" height="42" rx="4" fill="#f472b6" stroke="#db2777" stroke-width="4"/>
+        <rect x="20" y="34" width="60" height="34" rx="2" fill="#fbcfe8" opacity="0.6"/>
+      </svg>`,
+      square: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <rect x="20" y="20" width="60" height="60" rx="5" fill="#a3e635" stroke="#65a30d" stroke-width="4"/>
+        <rect x="25" y="25" width="50" height="50" rx="3" fill="#d9f99d" opacity="0.6"/>
+      </svg>`,
+      oval: `<svg viewBox="0 0 100 100" class="w-full h-full word-svg-preview">
+        <ellipse cx="50" cy="50" rx="38" ry="26" fill="#fb923c" stroke="#ea580c" stroke-width="4"/>
+        <ellipse cx="48" cy="46" rx="30" ry="18" fill="#fed7aa" opacity="0.6"/>
+      </svg>`
+    };
+
+    // Web Audio Sound FX Synth
+    const AudioFX = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      playTone(freq, type, duration, delay = 0) {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          setTimeout(() => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+          }, delay * 1000);
+        } catch (e) {}
+      },
+      correct() {
+        this.playTone(523.25, 'triangle', 0.15, 0);
+        this.playTone(659.25, 'triangle', 0.15, 0.08);
+        this.playTone(783.99, 'triangle', 0.18, 0.16);
+        this.playTone(1046.50, 'triangle', 0.35, 0.24);
+      },
+      wrong() {
+        this.playTone(220, 'sawtooth', 0.18, 0);
+        this.playTone(180, 'sawtooth', 0.28, 0.14);
+      },
+      attack() {
+        this.playTone(440, 'sine', 0.1, 0);
+        this.playTone(880, 'sine', 0.18, 0.06);
+      },
+      faint() {
+        this.playTone(400, 'square', 0.12, 0);
+        this.playTone(340, 'square', 0.12, 0.1);
+        this.playTone(280, 'square', 0.15, 0.2);
+        this.playTone(200, 'square', 0.35, 0.3);
+      }
+    };
+  </script>
+
+  <script>
+    // 19 Vocabularies with precise character-by-character Bopomofo
+    const WORDS = [
+      // 第一頁：文具類
+      { key: "pen", word: "pen", zhRuby: "<ruby>原<rt>ㄩㄢˊ</rt></ruby><ruby>子<rt>ㄗˇ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "pencil", word: "pencil", zhRuby: "<ruby>鉛<rt>ㄑㄧㄢ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "book", word: "book", zhRuby: "<ruby>書<rt>ㄕㄨ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "notebook", word: "notebook", zhRuby: "<ruby>筆<rt>ㄅㄧˇ</rt></ruby><ruby>記<rt>ㄐㄧˋ</rt></ruby><ruby>本<rt>ㄅㄣˇ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "eraser", word: "eraser", zhRuby: "<ruby>橡<rt>ㄒㄧㄤˋ</rt></ruby><ruby>皮<rt>ㄆㄧˊ</rt></ruby><ruby>擦<rt>ㄘㄚ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "ruler", word: "ruler", zhRuby: "<ruby>尺<rt>ㄔˇ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "folder", word: "folder", zhRuby: "<ruby>資<rt>ㄗ</rt></ruby><ruby>料<rt>ㄌㄧㄠˋ</rt></ruby><ruby>夾<rt>ㄐㄧㄚˊ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      { key: "backpack", word: "backpack", zhRuby: "<ruby>後<rt>ㄏㄡˋ</rt></ruby><ruby>背<rt>ㄅㄟ</rt></ruby><ruby>包<rt>ㄅㄠ</rt></ruby>", catRuby: "<ruby>文<rt>ㄨㄣˊ</rt></ruby><ruby>具<rt>ㄐㄩˋ</rt></ruby>" },
+      // 第二頁：教室用品類
+      { key: "board", word: "board", zhRuby: "<ruby>白<rt>ㄅㄞˊ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby>", catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby>" },
+      { key: "marker", word: "marker", zhRuby: "<ruby>白<rt>ㄅㄞˊ</rt></ruby><ruby>板<rt>ㄅㄢˇ</rt></ruby><ruby>筆<rt>ㄅㄧˇ</rt></ruby>", catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby>" },
+      { key: "computer", word: "computer", zhRuby: "<ruby>電<rt>ㄉㄧㄢˋ</rt></ruby><ruby>腦<rt>ㄋㄠˇ</rt></ruby>", catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby>" },
+      { key: "globe", word: "globe", zhRuby: "<ruby>地<rt>ㄉㄧˋ</rt></ruby><ruby>球<rt>ㄑㄧㄡˊ</rt></ruby><ruby>儀<rt>ㄧˊ</rt></ruby>", catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby>" },
+      { key: "desk", word: "desk", zhRuby: "<ruby>書<rt>ㄕㄨ</rt></ruby><ruby>桌<rt>ㄓㄨㄛ</rt></ruby>", catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby>" },
+      { key: "chair", word: "chair", zhRuby: "<ruby>椅<rt>ㄧˇ</rt></ruby><ruby>子<rt>˙ㄗ</rt></ruby>", catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt></ruby><ruby>室<rt>ㄕˋ</rt></ruby><ruby>用<rt>ㄩㄥˋ</rt></ruby><ruby>品<rt>ㄆㄧㄣˇ</rt></ruby>" },
+      // 第三頁：形狀類
+      { key: "circle", word: "circle", zhRuby: "<ruby>圓<rt>ㄩㄢˊ</rt></ruby><ruby>形<rt>ㄒㄧㄥˊ</rt></ruby>", catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt></ruby><ruby>狀<rt>ㄓㄨㄤˋ</rt></ruby>" },
+      { key: "triangle", word: "triangle", zhRuby: "<ruby>三<rt>ㄙㄢ</rt></ruby><ruby>角<rt>ㄐㄧㄠˇ</rt></ruby><ruby>形<rt>ㄒㄧㄥˊ</rt></ruby>", catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt></ruby><ruby>狀<rt>ㄓㄨㄤˋ</rt></ruby>" },
+      { key: "rectangle", word: "rectangle", zhRuby: "<ruby>長<rt>ㄔㄤˊ</rt></ruby><ruby>方<rt>ㄈㄤ</rt></ruby><ruby>形<rt>ㄒㄧㄥˊ</rt></ruby>", catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt></ruby><ruby>狀<rt>ㄓㄨㄤˋ</rt></ruby>" },
+      { key: "square", word: "square", zhRuby: "<ruby>正<rt>ㄓㄥˋ</rt></ruby><ruby>方<rt>ㄈㄤ</rt></ruby><ruby>形<rt>ㄒㄧㄥˊ</rt></ruby>", catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt></ruby><ruby>狀<rt>ㄓㄨㄤˋ</rt></ruby>" },
+      { key: "oval", word: "oval", zhRuby: "<ruby>橢<rt>ㄊㄨㄛˇ</rt></ruby><ruby>圓<rt>ㄩㄢˊ</rt></ruby><ruby>形<rt>ㄒㄧㄥˊ</rt></ruby>", catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt></ruby><ruby>狀<rt>ㄓㄨㄤˋ</rt></ruby>" }
+    ];
+
+    const OPPONENTS = [
+      { name: "皮卡丘", id: 25 },
+      { name: "伊布", id: 133 },
+      { name: "小火龍", id: 4 },
+      { name: "傑尼龜", id: 7 },
+      { name: "妙蛙種子", id: 1 },
+      { name: "胖丁", id: 39 },
+      { name: "耿鬼", id: 94 },
+      { name: "卡比獸", id: 143 },
+      { name: "可達鴨", id: 54 },
+      { name: "喵喵", id: 52 },
+      { name: "波克比", id: 175 },
+      { name: "木木梟", id: 722 }
+    ];
+
+    let currentMode = 'quiz';
+    let currentWordIndex = 0;
+    let questionsDeck = [];
+    let defeatedCount = 0;
+    let streakCount = 0;
+    let totalScore = 0;
+    let isProcessingAnswer = false;
+    let currentOpponent = null;
+
+    function initGame() {
+      questionsDeck = [...WORDS].sort(() => Math.random() - 0.5);
+      currentWordIndex = 0;
+      spawnNewOpponent();
+      updateTopBar();
+      renderQuestion();
+    }
+  </script>
+
+  <script>
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('nav-quiz').className = mode === 'quiz' 
+        ? "flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-pink-500 bg-pink-500 text-white shadow-sm transition hover:scale-105 active:scale-95"
+        : "flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-pink-500 bg-white text-pink-600 shadow-sm transition hover:scale-105 active:scale-95";
+      
+      document.getElementById('nav-listen').className = mode === 'listen'
+        ? "flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-indigo-500 bg-indigo-500 text-white shadow-sm transition hover:scale-105 active:scale-95"
+        : "flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-indigo-500 bg-white text-indigo-600 shadow-sm transition hover:scale-105 active:scale-95";
+
+      document.getElementById('nav-spell').className = mode === 'spell'
+        ? "flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-purple-500 bg-purple-500 text-white shadow-sm transition hover:scale-105 active:scale-95"
+        : "flex-1 py-2 px-1 rounded-xl font-black text-sm sm:text-base border-2 border-purple-500 bg-white text-purple-600 shadow-sm transition hover:scale-105 active:scale-95";
+
+      document.getElementById('quiz-choices-wrap').classList.toggle('hidden', mode !== 'quiz');
+      document.getElementById('listen-choices-wrap').classList.toggle('hidden', mode !== 'listen');
+      document.getElementById('spell-input-wrap').classList.toggle('hidden', mode !== 'spell');
+
+      initGame();
+    }
+
+    function spawnNewOpponent() {
+      const opp = OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
+      currentOpponent = opp;
+      
+      const oppImg = document.getElementById('opponent-img');
+      oppImg.className = "w-full h-full object-contain opponent-idle relative z-10 filter drop-shadow-md";
+      oppImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${opp.id}.png`;
+      document.getElementById('opponent-name').innerText = opp.name;
+      document.getElementById('opponent-hp-bar').style.width = '100%';
+      document.getElementById('opponent-hp-bar').className = 'hp-bar-fill h-full bg-emerald-500 w-full';
+
+      setBattleMessage(`野生的 ${opp.name} 出現了！綿綿泡芙準備迎戰！`);
+    }
+
+    function setBattleMessage(htmlText) {
+      document.getElementById('battle-msg').innerHTML = htmlText;
+    }
+
+    function playCurrentWordAudio() {
+      const currentWordObj = questionsDeck[currentWordIndex];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(currentWordObj.word);
+        utter.lang = 'en-US';
+        utter.rate = 0.85;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function renderQuestion() {
+      isProcessingAnswer = false;
+      const wordObj = questionsDeck[currentWordIndex];
+      const feedbackEl = document.getElementById('feedback-area');
+      feedbackEl.innerHTML = '';
+
+      document.getElementById('cat-badge').innerHTML = wordObj.catRuby;
+
+      const svgWrap = document.getElementById('prompt-svg-wrap');
+      const textWrap = document.getElementById('prompt-text');
+
+      if (currentMode === 'quiz') {
+        svgWrap.classList.remove('hidden');
+        svgWrap.innerHTML = SVG_LIB[wordObj.key];
+        textWrap.innerHTML = wordObj.zhRuby;
+        renderTextOptions(wordObj);
+      } 
+      else if (currentMode === 'listen') {
+        svgWrap.classList.add('hidden');
+        textWrap.innerHTML = `🎧 <ruby>請<rt>ㄑㄧㄥˇ</rt></ruby><ruby>聽<rt>ㄊㄧㄥ</rt></ruby><ruby>發<rt>ㄈㄚ</rt></ruby><ruby>音<rt>ㄧㄣ</rt></ruby><ruby>選<rt>ㄒㄩㄢˇ</rt></ruby><ruby>擇<rt>ㄗㄜˊ</rt></ruby><ruby>圖<rt>ㄊㄨˊ</rt></ruby><ruby>片<rt>ㄆㄧㄢˋ</rt></ruby>`;
+        renderPictureOptions(wordObj);
+        setTimeout(playCurrentWordAudio, 250);
+      } 
+      else if (currentMode === 'spell') {
+        svgWrap.classList.remove('hidden');
+        svgWrap.innerHTML = SVG_LIB[wordObj.key];
+        textWrap.innerHTML = wordObj.zhRuby;
+        const input = document.getElementById('spell-input');
+        input.value = '';
+        input.disabled = false;
+        setTimeout(() => input.focus(), 150);
+      }
+    }
+
+    function renderTextOptions(currentObj) {
+      const container = document.getElementById('quiz-choices-wrap');
+      container.innerHTML = '';
+
+      const pool = WORDS.filter(w => w.key !== currentObj.key);
+      const randomThree = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+      const options = [currentObj, ...randomThree].sort(() => Math.random() - 0.5);
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "py-3 px-2 bg-slate-50 hover:bg-pink-50 border-2 border-slate-300 hover:border-pink-500 rounded-xl font-black text-lg text-slate-800 transition active:scale-95 shadow-sm";
+        btn.innerText = opt.word;
+        btn.onclick = () => handleAnswer(opt.key === currentObj.key, btn, currentObj.word);
+        container.appendChild(btn);
+      });
+    }
+
+    function renderPictureOptions(currentObj) {
+      const container = document.getElementById('listen-choices-wrap');
+      container.innerHTML = '';
+
+      const pool = WORDS.filter(w => w.key !== currentObj.key);
+      const randomThree = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+      const options = [currentObj, ...randomThree].sort(() => Math.random() - 0.5);
+
+      options.forEach(opt => {
+        const card = document.createElement('button');
+        card.className = "pic-card-option bg-white rounded-2xl p-2.5 flex flex-col items-center justify-center shadow-sm relative";
+        card.innerHTML = `
+          <div class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center">
+            ${SVG_LIB[opt.key]}
+          </div>
+          <div class="mt-1 text-xs font-bold text-slate-400">#選我</div>
+        `;
+        card.onclick = () => handleAnswer(opt.key === currentObj.key, card, currentObj.word);
+        container.appendChild(card);
+      });
+    }
+
+    function checkSpelling() {
+      if (isProcessingAnswer) return;
+      const input = document.getElementById('spell-input');
+      const val = input.value.trim().toLowerCase();
+      const currentObj = questionsDeck[currentWordIndex];
+
+      if (!val) return;
+      handleAnswer(val === currentObj.word.toLowerCase(), input, currentObj.word);
+    }
+
+    document.getElementById('spell-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkSpelling();
+    });
+
+    function handleAnswer(isCorrect, elementTarget, correctEnglish) {
+      if (isProcessingAnswer) return;
+      isProcessingAnswer = true;
+
+      const playerImg = document.getElementById('player-img');
+      const oppImg = document.getElementById('opponent-img');
+      const oppHpBar = document.getElementById('opponent-hp-bar');
+      const feedbackEl = document.getElementById('feedback-area');
+      const attackFx = document.getElementById('attack-fx');
+
+      if (isCorrect) {
+        AudioFX.correct();
+        streakCount++;
+        totalScore += 20 + streakCount * 5;
+
+        feedbackEl.innerHTML = `<span class="text-emerald-600">🎉 <ruby>答<rt>ㄉㄚˊ</rt></ruby><ruby>對<rt>ㄉㄨㄟˋ</rt></ruby><ruby>了<rt>˙ㄌㄜ</rt></ruby>！${correctEnglish}！</span>`;
+
+        playerImg.classList.add('anim-attack');
+        attackFx.classList.remove('hidden');
+
+        setTimeout(() => {
+          AudioFX.attack();
+          oppImg.classList.add('anim-hurt');
+          oppHpBar.style.width = '0%';
+          oppHpBar.className = 'hp-bar-fill h-full bg-rose-500 w-0';
+
+          setBattleMessage(`綿綿泡芙使用了<b>「妖精之風」</b>！對手 ${currentOpponent.name} 倒下了！`);
+        }, 350);
+
+        setTimeout(() => {
+          AudioFX.faint();
+          oppImg.classList.remove('anim-hurt');
+          oppImg.classList.add('anim-faint');
+          defeatedCount++;
+          updateTopBar();
+        }, 850);
+
+        setTimeout(() => {
+          playerImg.classList.remove('anim-attack');
+          attackFx.classList.add('hidden');
+          nextWordOrOpponent();
+        }, 1600);
+
+      } else {
+        AudioFX.wrong();
+        streakCount = 0;
+        updateTopBar();
+
+        feedbackEl.innerHTML = `<span class="text-rose-600">❌ <ruby>答<rt>ㄉㄚˊ</rt></ruby><ruby>錯<rt>ㄘㄨㄛˋ</rt></ruby><ruby>了<rt>˙ㄌㄜ</rt></ruby>！<ruby>正<rt>ㄓㄥˋ</rt></ruby><ruby>確<rt>ㄑㄩㄝˋ</rt></ruby><ruby>是<rt>ㄕˋ</rt></ruby>：${correctEnglish}</span>`;
+        setBattleMessage(`${currentOpponent.name} 展開了反擊！加油，別氣餒！`);
+
+        playerImg.classList.add('anim-hurt');
+        setTimeout(() => {
+          playerImg.classList.remove('anim-hurt');
+          playCurrentWordAudio();
+        }, 600);
+
+        setTimeout(() => {
+          nextWordOrOpponent();
+        }, 1800);
+      }
+    }
+
+    function nextWordOrOpponent() {
+      currentWordIndex++;
+      if (currentWordIndex >= questionsDeck.length) {
+        questionsDeck = [...WORDS].sort(() => Math.random() - 0.5);
+        currentWordIndex = 0;
+        setBattleMessage(`🎉 恭喜完成一輪練習！綿綿泡芙等級提升！新的挑戰來了！`);
+      }
+      spawnNewOpponent();
+      renderQuestion();
+    }
+
+    function updateTopBar() {
+      document.getElementById('defeat-count').innerText = `${defeatedCount} 隻`;
+      document.getElementById('streak-count').innerText = `${streakCount} 題`;
+      document.getElementById('score-count').innerText = `${totalScore} EXP`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initGame();
+    });
+  </script>
+</body>
+</html>
