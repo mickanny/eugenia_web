@@ -1,8 +1,3 @@
-<!-- ```1. **修正指名的 4 個單字**：
-```* **17 about (關於)**：抽象詞不使用不貼切的符號，直接以清晰、有設計質感的 **英文字卡** 呈現。
-```* **15 three (三)**：修正破圖與排版，改為清晰明確的數字「**3**」字卡（3 顆星星）。
-```* **23 body (身體)**：原本的心臟圖示已修正為清楚的人體軀幹與四肢線條的「**全身/身體**」向量圖。
-```* **27 bed (床)**：修正破圖問題，改為完整的雙人木質「**床鋪與枕頭被子**」向量圖。-->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -370,10 +365,10 @@
       align-items: center;
       justify-content: center;
     }
-    .item-icon-img {
-      width: 75px;
-      height: 75px;
-      object-fit: contain;
+    .item-icon-svg {
+      width: 80px;
+      height: 80px;
+      display: block;
     }
 
     .speaker-btn {
@@ -407,7 +402,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 105px;
+      min-height: 110px;
       transition: all 0.2s;
     }
     .choice-btn:hover { border-color: var(--primary); background: #fff5f5; }
@@ -415,17 +410,16 @@
     .choice-btn.wrong { background: #ffe3e3 !important; border-color: #e71d36 !important; }
 
     .choice-icon-wrap {
-      width: 65px;
-      height: 65px;
+      width: 68px;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
-    .choice-icon-wrap .item-icon-img {
-      width: 58px;
-      height: 58px;
-      object-fit: contain;
+    .choice-icon-wrap .item-icon-svg {
+      width: 65px;
+      height: 65px;
     }
     .choice-label-with-zy {
       font-size: 0.95rem;
@@ -723,122 +717,163 @@
       { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("炎","ㄧㄢˊ") + zy("兔","ㄊㄨˋ") + zy("兒","ㄦˊ"), dexId: 813 }
     ];
 
-    function makeWordCardSvg(wordText, bgColor = "#6366f1") {
+    // ==================== 100% 本地向量單字圖卡系統（零外連、零報錯） ====================
+    function makeWordCardSvg(wordText, idNum, colorPair) {
       const len = wordText.length;
       const fontSize = len > 8 ? 16 : (len > 5 ? 20 : 25);
-      return `<svg class="item-icon-img" viewBox="0 0 100 100">
-        <rect x="5" y="8" width="90" height="84" rx="16" fill="${bgColor}"/>
-        <rect x="9" y="12" width="82" height="76" rx="12" fill="#ffffff" opacity="0.15"/>
-        <text x="50" y="54" font-family="'Segoe UI', Roboto, sans-serif" font-size="${fontSize}" font-weight="900" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${wordText}</text>
+      const c1 = colorPair[0];
+      const c2 = colorPair[1];
+
+      return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+        <defs>
+          <linearGradient id="g_${idNum}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${c1}" />
+            <stop offset="100%" stop-color="${c2}" />
+          </linearGradient>
+        </defs>
+        <rect x="5" y="6" width="90" height="88" rx="16" fill="url(#g_${idNum})" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))"/>
+        <rect x="8" y="9" width="84" height="82" rx="13" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.3"/>
+        <rect x="12" y="13" width="26" height="15" rx="6" fill="#000000" fill-opacity="0.2"/>
+        <text x="25" y="24" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">#${idNum}</text>
+        <text x="50" y="58" font-family="'Segoe UI', Roboto, sans-serif" font-size="${fontSize}" font-weight="900" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">${wordText}</text>
       </svg>`;
     }
 
-    // 圖片載入失敗時的安全降級函式（徹底解決 ""/> 溢出問題）
-    function handleImgError(imgEl, wordText) {
-      imgEl.onerror = null;
-      const div = document.createElement('div');
-      div.innerHTML = makeWordCardSvg(wordText);
-      imgEl.replaceWith(div.firstElementChild);
-    }
+    const PALETTES = [
+      ["#3b82f6", "#1d4ed8"], ["#10b981", "#047857"], ["#f59e0b", "#d97706"],
+      ["#ef4444", "#b91c1c"], ["#8b5cf6", "#6d28d9"], ["#ec4899", "#be185d"],
+      ["#06b6d4", "#0e7490"], ["#84cc16", "#4d7c0f"], ["#6366f1", "#4338ca"]
+    ];
 
     function getItemIconImg(item) {
       const id = item.id;
       const word = item.word;
 
-      const textOnlyIds = [9, 14, 16, 17, 26, 36, 39, 60, 95];
-      if (textOnlyIds.includes(id)) {
-        const bgColors = ["#4f46e5", "#0891b2", "#059669", "#d97706", "#dc2626", "#7c3aed"];
-        return makeWordCardSvg(word, bgColors[id % bgColors.length]);
-      }
-
-      if (id === 15) {
-        return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="5" y="5" width="90" height="90" rx="18" fill="#fef08a"/>
-          <text x="50" y="56" font-size="46" font-weight="bold" fill="#ca8a04" text-anchor="middle" dominant-baseline="middle">3</text>
-          <circle cx="30" cy="78" r="4" fill="#eab308"/>
-          <circle cx="50" cy="78" r="4" fill="#eab308"/>
-          <circle cx="70" cy="78" r="4" fill="#eab308"/>
+      // 1. 書本 (20: book) 專屬精裝書插圖
+      if (id === 20) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#f8fafc"/>
+          <path d="M18 24 C34 18 48 22 50 28 C52 22 66 18 82 24 L82 74 C66 68 52 72 50 78 C48 72 34 68 18 74 Z" fill="#ef4444"/>
+          <path d="M22 28 C36 22 47 25 49 31 L49 75 C47 69 36 66 22 72 Z" fill="#ffffff"/>
+          <path d="M78 28 C64 22 53 25 51 31 L51 75 C53 69 64 66 78 72 Z" fill="#ffffff"/>
+          <line x1="50" y1="28" x2="50" y2="78" stroke="#991b1b" stroke-width="2.5"/>
+          <text x="50" y="88" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#b91c1c" text-anchor="middle">book</text>
         </svg>`;
       }
 
-      if (id === 23) {
-        return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="5" y="5" width="90" height="90" rx="18" fill="#e0e7ff"/>
-          <circle cx="50" cy="22" r="10" fill="#4338ca"/>
-          <rect x="42" y="34" width="16" height="30" rx="6" fill="#4338ca"/>
-          <line x1="42" y1="38" x2="24" y2="54" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
-          <line x1="58" y1="38" x2="76" y2="54" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
-          <line x1="45" y1="62" x2="36" y2="88" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
-          <line x1="55" y1="62" x2="64" y2="88" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
+      // 2. 大腿部 (6: lap) 專屬圖示
+      if (id === 6) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#f0fdf4"/>
+          <!-- 坐姿軀幹與大腿示意 -->
+          <circle cx="35" cy="24" r="9" fill="#059669"/>
+          <path d="M35 34 L35 56 L68 56 L68 80" stroke="#059669" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- 大腿重點標示框 -->
+          <rect x="36" y="48" width="34" height="16" rx="6" fill="#34d399" opacity="0.4" stroke="#047857" stroke-width="2" stroke-dasharray="3,2"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#047857" text-anchor="middle">lap</text>
         </svg>`;
       }
 
-      if (id === 27) {
-        return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="5" y="5" width="90" height="90" rx="18" fill="#fdf2f8"/>
-          <rect x="14" y="28" width="10" height="48" rx="3" fill="#92400e"/>
-          <rect x="76" y="44" width="10" height="32" rx="3" fill="#92400e"/>
-          <rect x="20" y="46" width="60" height="22" rx="4" fill="#38bdf8"/>
-          <ellipse cx="32" cy="42" rx="8" ry="6" fill="#ffffff" stroke="#bae6fd" stroke-width="2"/>
-          <path d="M42 46 L78 46 C79 46 80 47 80 48 L80 68 L42 68 Z" fill="#0284c7"/>
-          <rect x="16" y="74" width="6" height="12" fill="#78350f"/>
-          <rect x="78" y="74" width="6" height="12" fill="#78350f"/>
-        </svg>`;
-      }
-
+      // 3. 筆 (18: pen)
       if (id === 18) {
-        return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="5" y="5" width="90" height="90" rx="18" fill="#e0f2fe"/>
-          <path d="M25 75 L68 20 L80 32 L37 87 Z" fill="#0284c7"/>
-          <polygon points="25,75 16,88 37,87" fill="#1e293b"/>
-          <circle cx="18" cy="86" r="2" fill="#38bdf8"/>
-          <rect x="63" y="16" width="6" height="18" rx="2" transform="rotate(45 63 16)" fill="#f1f5f9"/>
-          <line x1="58" y1="26" x2="72" y2="40" stroke="#bae6fd" stroke-width="3"/>
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#eff6ff"/>
+          <path d="M26 74 L68 22 L80 34 L38 86 Z" fill="#0284c7"/>
+          <polygon points="26,74 16,88 38,86" fill="#0f172a"/>
+          <circle cx="18" cy="86" r="2.5" fill="#38bdf8"/>
+          <rect x="63" y="18" width="6" height="18" rx="2" transform="rotate(45 63 18)" fill="#f1f5f9"/>
+          <line x1="58" y1="28" x2="72" y2="42" stroke="#bae6fd" stroke-width="3"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#0284c7" text-anchor="middle">pen</text>
         </svg>`;
       }
 
+      // 4. 鉛筆 (19: pencil)
+      if (id === 19) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#fffbeb"/>
+          <polygon points="32,70 66,22 78,34 44,82" fill="#f59e0b"/>
+          <polygon points="32,70 20,86 44,82" fill="#d97706"/>
+          <polygon points="20,86 24,80 28,84" fill="#1e293b"/>
+          <rect x="68" y="18" width="10" height="16" rx="3" transform="rotate(45 68 18)" fill="#fb7185"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#d97706" text-anchor="middle">pencil</text>
+        </svg>`;
+      }
+
+      // 5. 橡皮擦 (21: eraser)
       if (id === 21) {
-        return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="5" y="5" width="90" height="90" rx="18" fill="#fdf2f8"/>
-          <g transform="rotate(-20 50 50)">
-            <polygon points="22,38 52,24 82,42 52,56" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
-            <polygon points="22,38 52,56 52,74 22,56" fill="#3b82f6"/>
-            <polygon points="52,56 82,42 82,60 52,74" fill="#1d4ed8"/>
-            <polygon points="22,46 52,64 52,74 22,56" fill="#ef4444"/>
-            <polygon points="52,64 82,50 82,60 52,74" fill="#b91c1c"/>
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#fdf2f8"/>
+          <g transform="rotate(-20 50 48)">
+            <polygon points="22,34 52,20 82,38 52,52" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+            <polygon points="22,34 52,52 52,70 22,52" fill="#3b82f6"/>
+            <polygon points="52,52 82,38 82,56 52,70" fill="#1d4ed8"/>
+            <polygon points="22,44 52,62 52,70 22,52" fill="#ef4444"/>
+            <polygon points="52,62 82,46 82,56 52,70" fill="#b91c1c"/>
           </g>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#db2777" text-anchor="middle">eraser</text>
         </svg>`;
       }
 
-      const EMOJI_MAP = {
-        1: "1f96b", 2: "1f30a", 3: "1f987", 4: "1f431", 5: "1f9e2",
-        6: "1f9b5", 7: "1f468", 8: "2728", 10: "1f440", 11: "1f506",
-        12: "1f98b", 13: "1f438", 19: "270f-fe0f", 20: "1f4d6", 22: "1f4cf",
-        24: "1f442", 25: "1f441-fe0f", 28: "1f534", 29: "1f9d1-200d-2695-fe0f",
-        30: "1f945", 31: "1f9d2", 32: "1f372", 33: "1f465", 34: "2709-fe0f",
-        35: "1f50e", 37: "1f60b", 38: "1f37f", 40: "1f97c", 41: "1f4e6",
-        42: "1f3a1", 43: "1f392", 44: "23fa", 45: "1f53a", 46: "25ad-fe0f",
-        47: "2b1b", 48: "1f443", 49: "1f9e0", 50: "270c-fe0f", 51: "1f418",
-        52: "26cf-fe0f", 53: "1f943", 54: "1f528", 55: "1f94a", 56: "1f455",
-        57: "1fad7", 58: "1f38a", 59: "1f987", 61: "1f7e2", 62: "2709-fe0f",
-        63: "1f409", 64: "1f388", 65: "26aa", 66: "1f535", 67: "1f3d8-fe0f",
-        68: "2b55", 69: "1f468", 70: "1f469", 71: "1f474", 72: "1f475",
-        73: "1f445", 74: "1f331", 75: "1f338", 76: "1fa93", 77: "1f9f7",
-        78: "1f525", 79: "1f372", 80: "1f98a", 81: "1f4e6", 82: "1f9f9",
-        83: "1fab5", 84: "1f415", 85: "1fac2", 86: "1f41b", 87: "2600-fe0f",
-        88: "1f3c3", 89: "1f9bf", 90: "1f337", 91: "1f964", 92: "1f3da-fe0f",
-        93: "1f3f3-fe0f", 94: "262f-fe0f", 96: "1f467", 97: "1f466",
-        98: "1f343", 99: "1f91c", 100: "1f91b"
-      };
-
-      const code = EMOJI_MAP[id];
-      if (code) {
-        // 使用安全乾淨的 onerror 函式呼叫
-        return `<img class="item-icon-img" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${code}.png" alt="${word}" onerror="handleImgError(this, '${word}')" />`;
+      // 6. 三 (15: three)
+      if (id === 15) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#fef08a"/>
+          <text x="50" y="52" font-size="44" font-weight="900" fill="#ca8a04" text-anchor="middle" dominant-baseline="middle">3</text>
+          <circle cx="32" cy="74" r="5" fill="#eab308"/>
+          <circle cx="50" cy="74" r="5" fill="#eab308"/>
+          <circle cx="68" cy="74" r="5" fill="#eab308"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#a16207" text-anchor="middle">three</text>
+        </svg>`;
       }
-      return makeWordCardSvg(word);
+
+      // 7. 身體 (23: body)
+      if (id === 23) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#e0e7ff"/>
+          <circle cx="50" cy="20" r="9" fill="#4338ca"/>
+          <rect x="43" y="31" width="14" height="26" rx="5" fill="#4338ca"/>
+          <line x1="43" y1="35" x2="26" y2="48" stroke="#4338ca" stroke-width="5" stroke-linecap="round"/>
+          <line x1="57" y1="35" x2="74" y2="48" stroke="#4338ca" stroke-width="5" stroke-linecap="round"/>
+          <line x1="46" y1="56" x2="38" y2="76" stroke="#4338ca" stroke-width="5" stroke-linecap="round"/>
+          <line x1="54" y1="56" x2="62" y2="76" stroke="#4338ca" stroke-width="5" stroke-linecap="round"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#3730a3" text-anchor="middle">body</text>
+        </svg>`;
+      }
+
+      // 8. 床 (27: bed)
+      if (id === 27) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#fdf4ff"/>
+          <rect x="16" y="28" width="8" height="46" rx="3" fill="#92400e"/>
+          <rect x="76" y="42" width="8" height="32" rx="3" fill="#92400e"/>
+          <rect x="22" y="44" width="56" height="20" rx="4" fill="#38bdf8"/>
+          <ellipse cx="32" cy="40" rx="7" ry="5" fill="#ffffff" stroke="#bae6fd" stroke-width="2"/>
+          <path d="M42 44 L76 44 C77 44 78 45 78 46 L78 64 L42 64 Z" fill="#0284c7"/>
+          <rect x="18" y="70" width="5" height="10" fill="#78350f"/>
+          <rect x="77" y="70" width="5" height="10" fill="#78350f"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#86198f" text-anchor="middle">bed</text>
+        </svg>`;
+      }
+
+      // 9. 尺 (22: ruler)
+      if (id === 22) {
+        return `<svg class="item-icon-svg" viewBox="0 0 100 100">
+          <rect x="5" y="6" width="90" height="88" rx="16" fill="#fefce8"/>
+          <rect x="16" y="40" width="68" height="20" rx="3" fill="#eab308" transform="rotate(-18 50 50)"/>
+          <line x1="30" y1="41" x2="30" y2="47" stroke="#713f12" stroke-width="2"/>
+          <line x1="42" y1="37" x2="42" y2="43" stroke="#713f12" stroke-width="2"/>
+          <line x1="54" y1="33" x2="54" y2="39" stroke="#713f12" stroke-width="2"/>
+          <line x1="66" y1="29" x2="66" y2="35" stroke="#713f12" stroke-width="2"/>
+          <text x="50" y="89" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#854d0e" text-anchor="middle">ruler</text>
+        </svg>`;
+      }
+
+      // 全部其他所有單字：統一產生高質感漸層色「單字圖卡」
+      const pair = PALETTES[id % PALETTES.length];
+      return makeWordCardSvg(word, id, pair);
     }
 
+    // ==================== 1~100 單字資料庫 ====================
     const WORD_DATABASE = [
       { id: 1, word: "jam", zh: zy("果","ㄍㄨㄛˇ") + zy("醬","ㄐㄧㄤˋ") },
       { id: 2, word: "dam", zh: zy("水","ㄕㄨㄟˇ") + zy("壩","ㄅㄚˋ") },
