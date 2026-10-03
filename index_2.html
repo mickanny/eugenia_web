@@ -1,457 +1,46 @@
+```1. **修正指名的 4 個單字**：
+```* **17 about (關於)**：抽象詞不使用不貼切的符號，直接以清晰、有設計質感的 **英文字卡** 呈現。
+```* **15 three (三)**：修正破圖與排版，改為清晰明確的數字「**3**」字卡（3 顆星星）。
+```* **23 body (身體)**：原本的心臟圖示已修正為清楚的人體軀幹與四肢線條的「**全身/身體**」向量圖。
+```* **27 bed (床)**：修正破圖問題，改為完整的雙人木質「**床鋪與枕頭被子**」向量圖。
+```html
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>英文字詞練習大冒險</title>
+  <title>寶可夢英文單字大對決</title>
   <style>
     :root {
-      --primary: #4361ee;
-      --secondary: #3f37c9;
-      --success: #2ec4b6;
-      --danger: #e71d36;
-      --bg: #f8f9fa;
-      --card: #ffffff;
+      --primary: #e63946;
+      --secondary: #457b9d;
+      --bg: #1d3557;
+      --card-bg: #ffffff;
       --text: #2b2d42;
+      --hp-green: #2ec4b6;
+      --hp-danger: #e71d36;
     }
-    * { box-sizing: border-box; font-family: 'BiauKai', 'DFKai-SB', 'PingFang TC', system-ui, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      background: var(--bg);
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      font-family: 'BiauKai', 'DFKai-SB', 'PingFang TC', sans-serif;
       color: var(--text);
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      padding: 12px;
     }
-    .container {
-      width: 100%;
-      max-width: 620px;
-      background: var(--card);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    h1 { margin-top: 0; color: var(--primary); font-size: 1.8rem; line-height: 1.6; }
-    ruby { ruby-position: over; }
-    rt { font-size: 0.55em; color: #4a5568; font-weight: normal; }
-    
-    .nav {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    button {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: 0.2s;
-      line-height: 1.5;
-    }
-    button:hover { background: var(--secondary); transform: translateY(-1px); }
-    button.outline {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-    }
-    button.outline.active {
-      background: var(--primary);
-      color: white;
-    }
-    button.outline.active rt { color: #f1f5f9; }
-    
-    .score-board {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      color: #6c757d;
-      margin-bottom: 16px;
-      padding: 0 8px;
-      font-size: 1.1rem;
-    }
-    .card {
-      background: #f1f5f9;
-      border-radius: 14px;
-      padding: 26px 16px;
-      margin-bottom: 20px;
-      position: relative;
-    }
-    .word-prompt {
-      font-size: 2.1rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #1e293b;
-      min-height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .category-tag {
-      display: inline-block;
-      padding: 4px 14px;
-      background: #e2e8f0;
-      border-radius: 20px;
-      font-size: 0.95rem;
-      margin-bottom: 10px;
-      color: #475569;
-    }
-    .speaker-btn {
-      background: #e2e8f0;
-      color: #334155;
-      font-size: 1.5rem;
-      border-radius: 50%;
-      width: 52px;
-      height: 52px;
+
+    /* 台灣課本標準：國字在左、注音直排在右側樣式 */
+    .zy-block {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-top: 8px;
+      vertical-align: middle;
+      margin: 0 1px;
+      line-height: 1;
     }
-    .speaker-btn:hover { background: #cbd5e1; }
-    
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .option-btn {
-      background: white;
-      color: var(--text);
-      border: 2px solid #e2e8f0;
-      padding: 14px 8px;
-      font-size: 1.25rem;
-      border-radius: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 64px;
-    }
-    .option-btn:hover { border-color: var(--primary); background: #f8faff; }
-    .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
-    .option-btn.correct rt { color: #f1f5f9; }
-    .option-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
-    .option-btn.wrong rt { color: #f1f5f9; }
-
-    .spell-input {
-      font-size: 1.4rem;
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: 2px solid #cbd5e1;
-      width: 80%;
-      max-width: 320px;
-      text-align: center;
-      margin-bottom: 16px;
-      text-transform: lowercase;
-    }
-    .feedback {
-      min-height: 36px;
-      font-weight: bold;
-      margin-top: 14px;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .feedback.correct { color: var(--success); }
-    .feedback.wrong { color: var(--danger); }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <h1>🎒 <ruby>英<rt>ㄧㄥ</rt>語<rt>ㄩˇ</rt></ruby><ruby>單<rt>ㄉㄢ</rt>字<rt>ㄗˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt>冒<rt>ㄇㄠˋ</rt>險<rt>ㄒㄧㄢˇ</rt></ruby></h1>
-
-    <div class="nav">
-      <button class="outline active" id="btn-quiz" onclick="switchMode('quiz')">
-        <ruby>選<rt>ㄒㄩㄢˇ</rt>擇<rt>ㄗㄜˊ</rt>題<rt>ㄊㄧˊ</rt></ruby>
-      </button>
-      <button class="outline" id="btn-spell" onclick="switchMode('spell')">
-        <ruby>拼<rt>ㄆㄧㄣ</rt>字<rt>ㄗˋ</rt>挑<rt>ㄊㄧㄠˇ</rt>戰<rt>ㄓㄢˋ</rt></ruby>
-      </button>
-      <button class="outline" id="btn-listen" onclick="switchMode('listen')">
-        <ruby>聽<rt>ㄊㄧㄥ</rt>音<rt>ㄧㄣ</rt>猜<rt>ㄘㄞ</rt>字<rt>ㄗˋ</rt></ruby>
-      </button>
-    </div>
-
-    <div class="score-board">
-      <span id="progress-text"><ruby>題<rt>ㄊㄧˊ</rt>號<rt>ㄏㄠˋ</rt></ruby>: 1 / 19</span>
-      <span id="score-text"><ruby>得<rt>ㄉㄜˊ</rt>分<rt>ㄈㄣ</rt></ruby>: 0</span>
-    </div>
-
-    <div class="card">
-      <div id="category" class="category-tag"></div>
-      <div id="prompt" class="word-prompt"></div>
-      <button id="voice-btn" class="speaker-btn" onclick="speakCurrentWord()">🔊</button>
-    </div>
-
-    <!-- 選擇題區塊 -->
-    <div id="quiz-area" class="options-grid"></div>
-
-    <!-- 拼字挑戰區塊 -->
-    <div id="spell-area" style="display: none;">
-      <input type="text" id="spell-input" class="spell-input" placeholder="請輸入英文單字..." autocomplete="off" />
-      <br>
-      <button onclick="checkSpelling()">
-        <ruby>送<rt>ㄙㄨㄥˋ</rt>出<rt>ㄔㄨ</rt>答<rt>ㄉㄚˊ</rt>案<rt>ㄢˋ</rt></ruby>
-      </button>
-    </div>
-
-    <div id="feedback" class="feedback"></div>
-  </div>
-
-  <script>
-    // 包含注音標籤的單字資料庫
-    const wordList = [
-      // 第一頁：文具類
-      { 
-        word: "pen", 
-        zhRuby: "<ruby>原<rt>ㄩㄢˊ</rt>子<rt>ㄗˇ</rt>筆<rt>ㄅㄧˇ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "pencil", 
-        zhRuby: "<ruby>鉛<rt>ㄑㄧㄢ</rt>筆<rt>ㄅㄧˇ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "book", 
-        zhRuby: "<ruby>書<rt>ㄕㄨ</rt>本<rt>ㄅㄣˇ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "notebook", 
-        zhRuby: "<ruby>筆<rt>ㄅㄧˇ</rt>記<rt>ㄐㄧˋ</rt>本<rt>ㄅㄣˇ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "eraser", 
-        zhRuby: "<ruby>橡<rt>ㄒㄧㄤˋ</rt>皮<rt>ㄆㄧˊ</rt>擦<rt>ㄘㄚ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "ruler", 
-        zhRuby: "<ruby>尺<rt>ㄔˇ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "folder", 
-        zhRuby: "<ruby>資<rt>ㄗ</rt>料<rt>ㄌㄧㄠˋ</rt>夾<rt>ㄐㄧㄚˊ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-      { 
-        word: "backpack", 
-        zhRuby: "<ruby>後<rt>ㄏㄡˋ</rt>背<rt>ㄅㄟ</rt>包<rt>ㄅㄠ</rt></ruby>", 
-        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
-      },
-
-      // 第二頁：教室用品類
-      { 
-        word: "board", 
-        zhRuby: "<ruby>白<rt>ㄅㄞˊ</rt>板<rt>ㄅㄢˇ</rt></ruby>", 
-        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
-      },
-      { 
-        word: "marker", 
-        zhRuby: "<ruby>白<rt>ㄅㄞˊ</rt>板<rt>ㄅㄢˇ</rt>筆<rt>ㄅㄧˇ</rt></ruby>", 
-        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
-      },
-      { 
-        word: "computer", 
-        zhRuby: "<ruby>電<rt>ㄉㄧㄢˋ</rt>腦<rt>ㄋㄠˇ</rt></ruby>", 
-        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
-      },
-      { 
-        word: "globe", 
-        zhRuby: "<ruby>地<rt>ㄉㄧˋ</rt>球<rt>ㄑㄧㄡˊ</rt>儀<rt>ㄧˊ</rt></ruby>", 
-        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
-      },
-      { 
-        word: "desk", 
-        zhRuby: "<ruby>書<rt>ㄕㄨ</rt>桌<rt>ㄓㄨㄛ</rt></ruby>", 
-        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
-      },
-      { 
-        word: "chair", 
-        zhRuby: "<ruby>椅<rt>ㄧˇ</rt>子<rt>ㄗ˙</rt></ruby>", 
-        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
-      },
-
-      // 第三頁：形狀類
-      { 
-        word: "circle", 
-        zhRuby: "<ruby>圓<rt>ㄩㄢˊ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
-        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
-      },
-      { 
-        word: "triangle", 
-        zhRuby: "<ruby>三<rt>ㄙㄢ</rt>角<rt>ㄐㄧㄠˇ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
-        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
-      },
-      { 
-        word: "rectangle", 
-        zhRuby: "<ruby>長<rt>ㄔㄤˊ</rt>方<rt>ㄈㄤ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
-        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
-      },
-      { 
-        word: "square", 
-        zhRuby: "<ruby>正<rt>ㄓㄥˋ</rt>方<rt>ㄈㄤ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
-        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
-      },
-      { 
-        word: "oval", 
-        zhRuby: "<ruby>橢<rt>ㄊㄨㄛˇ</rt>圓<rt>ㄩㄢˊ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
-        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
-      }
-    ];
-
-    let currentMode = 'quiz';
-    let currentIndex = 0;
-    let score = 0;
-    let shuffledList = [];
-
-    function initGame() {
-      shuffledList = [...wordList].sort(() => Math.random() - 0.5);
-      currentIndex = 0;
-      score = 0;
-      updateUI();
-      renderQuestion();
-    }
-
-    function switchMode(mode) {
-      currentMode = mode;
-      document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(`btn-${mode}`).classList.add('active');
-      
-      document.getElementById('quiz-area').style.display = (mode === 'quiz' || mode === 'listen') ? 'grid' : 'none';
-      document.getElementById('spell-area').style.display = mode === 'spell' ? 'block' : 'none';
-      
-      initGame();
-    }
-
-    function speakCurrentWord() {
-      const item = shuffledList[currentIndex];
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(item.word);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.8;
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-
-    function renderQuestion() {
-      const item = shuffledList[currentIndex];
-      const feedback = document.getElementById('feedback');
-      feedback.innerHTML = '';
-      feedback.className = 'feedback';
-      
-      document.getElementById('category').innerHTML = item.catRuby;
-      updateUI();
-
-      if (currentMode === 'quiz') {
-        document.getElementById('prompt').innerHTML = item.zhRuby;
-        document.getElementById('voice-btn').style.display = 'none';
-        renderOptions(item.word, 'word');
-      } else if (currentMode === 'spell') {
-        document.getElementById('prompt').innerHTML = item.zhRuby;
-        document.getElementById('voice-btn').style.display = 'inline-flex';
-        document.getElementById('spell-input').value = '';
-        document.getElementById('spell-input').focus();
-      } else if (currentMode === 'listen') {
-        document.getElementById('prompt').innerHTML = '🎧 <ruby>請<rt>ㄑㄧㄥˇ</rt>聽<rt>ㄊㄧㄥ</rt>發<rt>ㄈㄚ</rt>音<rt>ㄧㄣ</rt></ruby>';
-        document.getElementById('voice-btn').style.display = 'inline-flex';
-        speakCurrentWord();
-        renderOptions(item.zhRuby, 'zhRuby');
-      }
-    }
-
-    function renderOptions(correctAnswer, field) {
-      const quizArea = document.getElementById('quiz-area');
-      quizArea.innerHTML = '';
-
-      let pool = wordList.map(w => w[field]).filter(val => val !== correctAnswer);
-      let options = pool.sort(() => Math.random() - 0.5).slice(0, 3);
-      options.push(correctAnswer);
-      options.sort(() => Math.random() - 0.5);
-
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerHTML = opt;
-        btn.onclick = () => selectOption(btn, opt === correctAnswer);
-        quizArea.appendChild(btn);
-      });
-    }
-
-    function selectOption(btn, isCorrect) {
-      const allBtns = document.querySelectorAll('.option-btn');
-      allBtns.forEach(b => b.disabled = true);
-
-      const feedback = document.getElementById('feedback');
-      if (isCorrect) {
-        btn.classList.add('correct');
-        feedback.innerHTML = '🎉 <ruby>答<rt>ㄉㄚˊ</rt>對<rt>ㄉㄨㄟˋ</rt>了<rt>˙ㄌㄜ</rt></ruby>！<ruby>太<rt>ㄊㄞˋ</rt>棒<rt>ㄅㄤˋ</rt>了<rt>˙ㄌㄜ</rt></ruby>！';
-        feedback.className = 'feedback correct';
-        score += 10;
-        speakCurrentWord();
-      } else {
-        btn.classList.add('wrong');
-        feedback.innerHTML = `❌ <ruby>答<rt>ㄉㄚˊ</rt>錯<rt>ㄘㄨㄛˋ</rt>了<rt>˙ㄌㄜ</rt></ruby>！${shuffledList[currentIndex].word}`;
-        feedback.className = 'feedback wrong';
-      }
-      setTimeout(nextQuestion, 1400);
-    }
-
-    function checkSpelling() {
-      const input = document.getElementById('spell-input').value.trim().toLowerCase();
-      const currentWord = shuffledList[currentIndex].word.toLowerCase();
-      const feedback = document.getElementById('feedback');
-
-      if (input === currentWord) {
-        feedback.innerHTML = '🎉 <ruby>拼<rt>ㄆㄧㄣ</rt>寫<rt>ㄒㄧㄝˇ</rt>完<rt>ㄨㄢˊ</rt>全<rt>ㄑㄩㄢˊ</rt>正<rt>ㄓㄥˋ</rt>確<rt>ㄑㄩㄝˋ</rt></ruby>！';
-        feedback.className = 'feedback correct';
-        score += 10;
-        speakCurrentWord();
-      } else {
-        feedback.innerHTML = `❌ <ruby>拼<rt>ㄆㄧㄣ</rt>錯<rt>ㄘㄨㄛˋ</rt>囉<rt>˙ㄌㄜ</rt></ruby>，<ruby>正<rt>ㄓㄥˋ</rt>確<rt>ㄑㄩㄝˋ</rt>是<rt>ㄕˋ</rt></ruby>：${currentWord}`;
-        feedback.className = 'feedback wrong';
-      }
-      setTimeout(nextQuestion, 1400);
-    }
-
-    document.getElementById('spell-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') checkSpelling();
-    });
-
-    function nextQuestion() {
-      currentIndex++;
-      if (currentIndex >= shuffledList.length) {
-        alert(`練習完成！恭喜獲得 ${score} 分！`);
-        initGame();
-      } else {
-        renderQuestion();
-      }
-    }
-
-    function updateUI() {
-      document.getElementById('progress-text').innerHTML = `<ruby>題<rt>ㄊㄧˊ</rt>號<rt>ㄏㄠˋ</rt></ruby>: ${currentIndex + 1} / ${shuffledList.length}`;
-      document.getElementById('score-text').innerHTML = `<ruby>得<rt>ㄉㄜˊ</rt>分<rt>ㄈㄣ</rt></ruby>: ${score}`;
-    }
-
-    // 啟動遊戲
-    initGame();
-  </script>
-</body>
-</html>    }
     .zy-char { font-size: 1.15em; line-height: 1; display: inline-block; }
     .zy-tone {
       writing-mode: vertical-rl;
@@ -565,7 +154,6 @@
       margin-bottom: 14px;
     }
 
-    /* 招式特寫與粒子特效容器 */
     .fx-layer {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -629,8 +217,7 @@
     .idle-bounce { animation: idle 2.5s infinite ease-in-out; }
     @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 
-    /* ====== 招式專屬動作動畫 ====== */
-    /* 1. 鐵尾：空中翻騰旋轉衝擊 */
+    /* ====== 招式動作動畫 ====== */
     .anim-iron-tail { animation: iron-tail 0.8s ease; }
     @keyframes iron-tail {
       0% { transform: translateX(0) rotate(0deg); }
@@ -638,14 +225,12 @@
       70% { transform: translateX(120px) rotate(360deg) scale(1.2); }
       100% { transform: translateX(0) rotate(0deg); }
     }
-    /* 2. 電擊：發光蓄電前傾震動 */
     .anim-thunder-jolt { animation: thunder-jolt 0.7s ease; }
     @keyframes thunder-jolt {
       0%, 100% { transform: translateX(0); filter: drop-shadow(0 8px 6px rgba(0,0,0,0.25)); }
       20%, 60% { transform: translateX(30px) scale(1.1); filter: drop-shadow(0 0 15px #ffd60a) brightness(1.4); }
       40%, 80% { transform: translateX(20px) scale(1.05); filter: drop-shadow(0 0 25px #ffb703) brightness(1.7); }
     }
-    /* 3. 雷丘·打雷：浮空召喚巨雷 */
     .anim-thunder-sky { animation: thunder-sky 2.4s ease; }
     @keyframes thunder-sky {
       0% { transform: scale(1); }
@@ -653,15 +238,12 @@
       70% { transform: translateY(-35px) scale(1.3); filter: drop-shadow(0 0 40px #ffea00) brightness(2); }
       100% { transform: translateY(0) scale(1); }
     }
-
-    /* 4. 撞擊：強力風馳電掣衝刺 */
     .anim-tackle { animation: tackle-dash 0.6s ease; }
     @keyframes tackle-dash {
       0% { transform: translateX(0); }
       40% { transform: translateX(130px) scale(1.15) skewX(-15deg); }
       100% { transform: translateX(0); }
     }
-    /* 5. 巨聲光線：後撤吼叫聲波 */
     .anim-hyper-voice { animation: hyper-voice 0.8s ease; }
     @keyframes hyper-voice {
       0% { transform: translateX(0); }
@@ -669,7 +251,6 @@
       50% { transform: translateX(35px) scale(1.2); }
       100% { transform: translateX(0); }
     }
-    /* 6. 仙子伊布·月亮之力：星光優雅升空 */
     .anim-moon-blast { animation: moon-blast 2.4s ease; }
     @keyframes moon-blast {
       0% { transform: scale(1); }
@@ -677,8 +258,6 @@
       75% { transform: translateY(-40px) scale(1.3); filter: drop-shadow(0 0 35px #ffb3c6) brightness(1.8); }
       100% { transform: translateY(0) scale(1); }
     }
-
-    /* 7. 爪擊：火花三連抓裂 */
     .anim-scratch { animation: scratch-rush 0.65s ease; }
     @keyframes scratch-rush {
       0% { transform: translateX(0); }
@@ -686,7 +265,6 @@
       60% { transform: translateX(120px) rotate(-15deg) scale(1.15); }
       100% { transform: translateX(0); }
     }
-    /* 8. 噴射火焰：鼓腹噴射火柱 */
     .anim-flamethrower { animation: flamethrower 0.8s ease; }
     @keyframes flamethrower {
       0% { transform: scale(1); }
@@ -694,7 +272,6 @@
       50% { transform: scale(1.1) translateX(40px); filter: drop-shadow(0 0 25px #ff7900) brightness(1.5); }
       100% { transform: scale(1); }
     }
-    /* 9. 噴火龍·大字爆炎：巨大展翅怒火燃燒 */
     .anim-fire-blast { animation: fire-blast 2.4s ease; }
     @keyframes fire-blast {
       0% { transform: scale(1); }
@@ -703,7 +280,6 @@
       100% { transform: translateY(0) scale(1); }
     }
 
-    /* 敵方動作 */
     .enemy-attack-forward { animation: enemy-atk 0.6s ease; }
     @keyframes enemy-atk {
       0% { transform: translateX(0); }
@@ -791,16 +367,16 @@
       gap: 12px;
     }
     .q-item-icon-box {
-      width: 75px;
-      height: 75px;
+      width: 85px;
+      height: 85px;
       margin: 4px auto;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .item-icon-img {
-      width: 70px;
-      height: 70px;
+      width: 75px;
+      height: 75px;
       object-fit: contain;
     }
 
@@ -836,7 +412,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 98px;
+      min-height: 105px;
       transition: all 0.2s;
     }
     .choice-btn:hover { border-color: var(--primary); background: #fff5f5; }
@@ -844,16 +420,16 @@
     .choice-btn.wrong { background: #ffe3e3 !important; border-color: #e71d36 !important; }
 
     .choice-icon-wrap {
-      width: 58px;
-      height: 58px;
+      width: 65px;
+      height: 65px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 4px;
     }
-    .choice-icon-wrap img {
-      width: 52px;
-      height: 52px;
+    .choice-icon-wrap .item-icon-img {
+      width: 58px;
+      height: 58px;
       object-fit: contain;
     }
     .choice-label-with-zy {
@@ -930,17 +506,14 @@
       </p>
 
       <div class="starter-group">
-        <!-- 皮卡丘 -->
         <div class="starter-card selected" onclick="selectStarter('pikachu', this)">
           <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu" />
           <div><span class="zy-block"><span class="zy-char">皮</span><span class="zy-tone">ㄆㄧˊ</span></span><span class="zy-block"><span class="zy-char">卡</span><span class="zy-tone">ㄎㄚˇ</span></span><span class="zy-block"><span class="zy-char">丘</span><span class="zy-tone">ㄑㄧㄡ</span></span></div>
         </div>
-        <!-- 伊布 -->
         <div class="starter-card" onclick="selectStarter('eevee', this)">
           <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png" alt="Eevee" />
           <div><span class="zy-block"><span class="zy-char">伊</span><span class="zy-tone">ㄧ</span></span><span class="zy-block"><span class="zy-char">布</span><span class="zy-tone">ㄅㄨˋ</span></span></div>
         </div>
-        <!-- 小火龍 -->
         <div class="starter-card" onclick="selectStarter('charmander', this)">
           <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="Charmander" />
           <div><span class="zy-block"><span class="zy-char">小</span><span class="zy-tone">ㄒㄧㄠˇ</span></span><span class="zy-block"><span class="zy-char">火</span><span class="zy-tone">ㄏㄨㄛˇ</span></span><span class="zy-block"><span class="zy-char">龍</span><span class="zy-tone">ㄌㄨㄥˊ</span></span></div>
@@ -963,7 +536,7 @@
       </button>
     </div>
 
-    <!-- ==================== 2. 寶可夢中心（Game Over 畫面） ==================== -->
+    <!-- ==================== 2. 寶可夢中心 ==================== -->
     <div id="poke-center-screen" class="overlay-screen" style="display: none;">
       <div style="font-size: 3.5rem; margin-bottom: 10px;">🏥</div>
       <h2 style="color: #e63946; margin-bottom: 12px;">
@@ -1088,7 +661,6 @@
   </div>
 
   <script>
-    // 注音小工具
     function zy(char, tone) {
       return `<span class="zy-block"><span class="zy-char">${char}</span><span class="zy-tone">${tone}</span></span>`;
     }
@@ -1097,11 +669,10 @@
       return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dexId}.png`;
     }
 
-    // ==================== 玩家寶可夢設定 ====================
     const POKEMON_CONFIG = {
       pikachu: {
         dexId: 25,
-        evoDexId: 26, // 雷丘
+        evoDexId: 26,
         nameHtml: zy("皮","ㄆㄧˊ") + zy("卡","ㄎㄚˇ") + zy("丘","ㄑㄧㄡ"),
         normalMove: zy("鐵","ㄊㄧㄝˇ") + zy("尾","ㄨㄟˇ"),
         specialMove: zy("電","ㄉㄧㄢˋ") + zy("擊","ㄐㄧˊ"),
@@ -1112,7 +683,7 @@
       },
       eevee: {
         dexId: 133,
-        evoDexId: 700, // 仙子伊布
+        evoDexId: 700,
         nameHtml: zy("伊","ㄧ") + zy("布","ㄅㄨˋ"),
         normalMove: zy("撞","ㄓㄨㄤˋ") + zy("擊","ㄐㄧˊ"),
         specialMove: zy("巨","ㄐㄩˋ") + zy("聲","ㄕㄥ") + zy("光","ㄍㄨㄤ") + zy("線","ㄒㄧㄢˋ"),
@@ -1123,7 +694,7 @@
       },
       charmander: {
         dexId: 4,
-        evoDexId: 6, // 噴火龍
+        evoDexId: 6,
         nameHtml: zy("小","ㄒㄧㄠˇ") + zy("火","ㄏㄨㄛˇ") + zy("龍","ㄌㄨㄥˊ"),
         normalMove: zy("爪","ㄓㄠˇ") + zy("擊","ㄐㄧˊ"),
         specialMove: zy("噴","ㄆㄣ") + zy("射","ㄕㄜˋ") + zy("火","ㄏㄨㄛˇ") + zy("焰","ㄧㄢˋ"),
@@ -1134,7 +705,6 @@
       }
     };
 
-    // ==================== 20 種最受歡迎野生寶可夢對手 ====================
     const WILD_ENEMIES = [
       { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("甲","ㄐㄧㄚˇ") + zy("賀","ㄏㄜˋ") + zy("忍","ㄖㄣˇ") + zy("蛙","ㄨㄚ"), dexId: 658 },
       { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("路","ㄌㄨˋ") + zy("卡","ㄎㄚˇ") + zy("利","ㄌㄧˋ") + zy("歐","ㄡ"), dexId: 448 },
@@ -1158,39 +728,81 @@
       { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("炎","ㄧㄢˊ") + zy("兔","ㄊㄨˋ") + zy("兒","ㄦˊ"), dexId: 813 }
     ];
 
-    // ==================== 具體物品圖標（修正 18:pen, 21:eraser） ====================
-    const EMOJI_MAP = {
-      1: "1f96b", 2: "1f30a", 3: "1f987", 4: "1f431", 5: "1f9e2",
-      6: "1f9b5", 7: "1f468", 8: "2728", 9: "1f44d", 10: "1f440",
-      11: "1f506", 12: "1f98b", 13: "1f438", 14: "1f91d", 15: "0033-fe0f-20e3",
-      16: "1f389", 17: "2139-fe0f",
-      18: "CUSTOM_PEN",      // 修正：原子筆專用精緻圖標
-      19: "270f-fe0f",       // 鉛筆
-      20: "1f4d6",           // 書本
-      21: "CUSTOM_ERASER",   // 修正：經典長方橡皮擦圖標
-      22: "1f4cf", 23: "1fac0", 24: "1f442", 25: "1f441-fe0f",
-      26: "1f96b", 27: "1f6cf-fe0f", 28: "1f534", 29: "1f9d1-200d-2695-fe0f", 30: "1f945",
-      31: "1f9d2", 32: "1f372", 33: "1f465", 34: "2709-fe0f", 35: "1f50e",
-      36: "27a1-fe0f", 37: "1f60b", 38: "1f37f", 39: "1f527", 40: "1f97c",
-      41: "1f4e6", 42: "1f3a1", 43: "1f392", 44: "23fa", 45: "1f53a",
-      46: "25ad-fe0f", 47: "2b1b", 48: "1f443", 49: "1f9e0", 50: "270c-fe0f",
-      51: "1f418", 52: "26cf-fe0f", 53: "1f943", 54: "1f528", 55: "1f94a",
-      56: "1f455", 57: "1fad7", 58: "1f38a", 59: "1f987", 60: "1f947",
-      61: "1f7e2", 62: "2709-fe0f", 63: "1f409", 64: "1f388", 65: "26aa",
-      66: "1f535", 67: "1f3d8-fe0f", 68: "2b55", 69: "1f468", 70: "1f469",
-      71: "1f474", 72: "1f475", 73: "1f445", 74: "1f331", 75: "1f338",
-      76: "1fa93", 77: "1f9f7", 78: "1f525", 79: "1f372", 80: "1f98a",
-      81: "1f4e6", 82: "1f9f9", 83: "1fab5", 84: "1f415", 85: "1fac2",
-      86: "1f41b", 87: "2600-fe0f", 88: "1f3c3", 89: "1f9bf", 90: "1f337",
-      91: "1f964", 92: "1f3da-fe0f", 93: "1f3f3-fe0f", 94: "262f-fe0f", 95: "27a1-fe0f",
-      96: "1f467", 97: "1f466", 98: "1f343", 99: "1f91c", 100: "1f91b"
-    };
+    // ==================== 純英文單字卡產生器 ====================
+    function makeWordCardSvg(wordText, bgColor = "#6366f1") {
+      const len = wordText.length;
+      const fontSize = len > 8 ? 16 : (len > 5 ? 20 : 25);
+      return `<svg class="item-icon-img" viewBox="0 0 100 100">
+        <rect x="5" y="8" width="90" height="84" rx="16" fill="${bgColor}"/>
+        <rect x="9" y="12" width="82" height="76" rx="12" fill="#ffffff" opacity="0.15"/>
+        <text x="50" y="54" font-family="'Segoe UI', Roboto, sans-serif" font-size="${fontSize}" font-weight="900" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">${wordText}</text>
+      </svg>`;
+    }
 
-    function getItemIconImg(id) {
-      if (id === 18) {
-        // 原子筆 (Pen)
+    // ==================== 修正後的 1~100 圖示生成函數 ====================
+    function getItemIconImg(item) {
+      const id = item.id;
+      const word = item.word;
+
+      // 1. 修正：關於 (17 about) 以及抽象字，直接呈現英文單字卡
+      const textOnlyIds = [9, 14, 16, 17, 26, 36, 39, 60, 95]; 
+      // 9:like, 14:have, 16:fun, 17:about, 26:can, 36:another, 39:use, 60:first, 95:then
+      if (textOnlyIds.includes(id)) {
+        const bgColors = ["#4f46e5", "#0891b2", "#059669", "#d97706", "#dc2626", "#7c3aed"];
+        return makeWordCardSvg(word, bgColors[id % bgColors.length]);
+      }
+
+      // 2. 修正：三 (15 three)
+      if (id === 15) {
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="0" y="0" width="100" height="100" rx="16" fill="#e0f2fe"/>
+          <rect x="5" y="5" width="90" height="90" rx="18" fill="#fef08a"/>
+          <text x="50" y="56" font-size="46" font-weight="bold" fill="#ca8a04" text-anchor="middle" dominant-baseline="middle">3</text>
+          <circle cx="30" cy="78" r="4" fill="#eab308"/>
+          <circle cx="50" cy="78" r="4" fill="#eab308"/>
+          <circle cx="70" cy="78" r="4" fill="#eab308"/>
+        </svg>`;
+      }
+
+      // 3. 修正：身體 (23 body) - 人體軀幹線條
+      if (id === 23) {
+        return `<svg class="item-icon-img" viewBox="0 0 100 100">
+          <rect x="5" y="5" width="90" height="90" rx="18" fill="#e0e7ff"/>
+          <!-- 頭部 -->
+          <circle cx="50" cy="22" r="10" fill="#4338ca"/>
+          <!-- 軀幹 -->
+          <rect x="42" y="34" width="16" height="30" rx="6" fill="#4338ca"/>
+          <!-- 雙手 -->
+          <line x1="42" y1="38" x2="24" y2="54" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
+          <line x1="58" y1="38" x2="76" y2="54" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
+          <!-- 雙腳 -->
+          <line x1="45" y1="62" x2="36" y2="88" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
+          <line x1="55" y1="62" x2="64" y2="88" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
+        </svg>`;
+      }
+
+      // 4. 修正：床 (27 bed) - 溫馨床鋪
+      if (id === 27) {
+        return `<svg class="item-icon-img" viewBox="0 0 100 100">
+          <rect x="5" y="5" width="90" height="90" rx="18" fill="#fdf2f8"/>
+          <!-- 床頭板 -->
+          <rect x="14" y="28" width="10" height="48" rx="3" fill="#92400e"/>
+          <rect x="76" y="44" width="10" height="32" rx="3" fill="#92400e"/>
+          <!-- 床墊本體 -->
+          <rect x="20" y="46" width="60" height="22" rx="4" fill="#38bdf8"/>
+          <!-- 枕頭 -->
+          <ellipse cx="32" cy="42" rx="8" ry="6" fill="#ffffff" stroke="#bae6fd" stroke-width="2"/>
+          <!-- 棉被 -->
+          <path d="M42 46 L78 46 C79 46 80 47 80 48 L80 68 L42 68 Z" fill="#0284c7"/>
+          <!-- 床腳 -->
+          <rect x="16" y="74" width="6" height="12" fill="#78350f"/>
+          <rect x="78" y="74" width="6" height="12" fill="#78350f"/>
+        </svg>`;
+      }
+
+      // 5. 修正：原子筆 (18 pen)
+      if (id === 18) {
+        return `<svg class="item-icon-img" viewBox="0 0 100 100">
+          <rect x="5" y="5" width="90" height="90" rx="18" fill="#e0f2fe"/>
           <path d="M25 75 L68 20 L80 32 L37 87 Z" fill="#0284c7"/>
           <polygon points="25,75 16,88 37,87" fill="#1e293b"/>
           <circle cx="18" cy="86" r="2" fill="#38bdf8"/>
@@ -1198,10 +810,11 @@
           <line x1="58" y1="26" x2="72" y2="40" stroke="#bae6fd" stroke-width="3"/>
         </svg>`;
       }
+
+      // 6. 修正：橡皮擦 (21 eraser)
       if (id === 21) {
-        // 橡皮擦 (Eraser) - 經典白藍紅橡皮擦
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
-          <rect x="0" y="0" width="100" height="100" rx="16" fill="#fdf2f8"/>
+          <rect x="5" y="5" width="90" height="90" rx="18" fill="#fdf2f8"/>
           <g transform="rotate(-20 50 50)">
             <polygon points="22,38 52,24 82,42 52,56" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
             <polygon points="22,38 52,56 52,74 22,56" fill="#3b82f6"/>
@@ -1211,11 +824,37 @@
           </g>
         </svg>`;
       }
-      const code = EMOJI_MAP[id] || "1f4da";
-      return `<img class="item-icon-img" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${code}.png" alt="icon" onerror="this.src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4da.png'" />`;
+
+      // 其餘單字使用精確 Twemoji 具體實物圖標
+      const EMOJI_MAP = {
+        1: "1f96b", 2: "1f30a", 3: "1f987", 4: "1f431", 5: "1f9e2",
+        6: "1f9b5", 7: "1f468", 8: "2728", 10: "1f440", 11: "1f506",
+        12: "1f98b", 13: "1f438", 19: "270f-fe0f", 20: "1f4d6", 22: "1f4cf",
+        24: "1f442", 25: "1f441-fe0f", 28: "1f534", 29: "1f9d1-200d-2695-fe0f",
+        30: "1f945", 31: "1f9d2", 32: "1f372", 33: "1f465", 34: "2709-fe0f",
+        35: "1f50e", 37: "1f60b", 38: "1f37f", 40: "1f97c", 41: "1f4e6",
+        42: "1f3a1", 43: "1f392", 44: "23fa", 45: "1f53a", 46: "25ad-fe0f",
+        47: "2b1b", 48: "1f443", 49: "1f9e0", 50: "270c-fe0f", 51: "1f418",
+        52: "26cf-fe0f", 53: "1f943", 54: "1f528", 55: "1f94a", 56: "1f455",
+        57: "1fad7", 58: "1f38a", 59: "1f987", 61: "1f7e2", 62: "2709-fe0f",
+        63: "1f409", 64: "1f388", 65: "26aa", 66: "1f535", 67: "1f3d8-fe0f",
+        68: "2b55", 69: "1f468", 70: "1f469", 71: "1f474", 72: "1f475",
+        73: "1f445", 74: "1f331", 75: "1f338", 76: "1fa93", 77: "1f9f7",
+        78: "1f525", 79: "1f372", 80: "1f98a", 81: "1f4e6", 82: "1f9f9",
+        83: "1fab5", 84: "1f415", 85: "1fac2", 86: "1f41b", 87: "2600-fe0f",
+        88: "1f3c3", 89: "1f9bf", 90: "1f337", 91: "1f964", 92: "1f3da-fe0f",
+        93: "1f3f3-fe0f", 94: "262f-fe0f", 96: "1f467", 97: "1f466",
+        98: "1f343", 99: "1f91c", 100: "1f91b"
+      };
+
+      const code = EMOJI_MAP[id];
+      if (code) {
+        return `<img class="item-icon-img" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${code}.png" alt="${word}" onerror="this.outerHTML='${makeWordCardSvg(word).replace(/'/g, "\\'")}'" />`;
+      }
+      return makeWordCardSvg(word);
     }
 
-    // ==================== 1~100 單字清單 ====================
+    // ==================== 1~100 單字資料庫 ====================
     const WORD_DATABASE = [
       { id: 1, word: "jam", zh: zy("果","ㄍㄨㄛˇ") + zy("醬","ㄐㄧㄤˋ") },
       { id: 2, word: "dam", zh: zy("水","ㄕㄨㄟˇ") + zy("壩","ㄅㄚˋ") },
@@ -1276,7 +915,7 @@
       { id: 57, word: "dip", zh: zy("沾","ㄓㄢ") + zy("醬","ㄐㄧㄤˋ") },
       { id: 58, word: "celebration", zh: zy("慶","ㄑㄧㄥˋ") + zy("祝","ㄓㄨˋ") },
       { id: 59, word: "costume", zh: zy("服","ㄈㄨˊ") + zy("裝","ㄓㄨㄤ") },
-      { id: 60, word: "first", zy: zy("第","ㄉㄧˋ") + zy("一","ㄧ") + zy("個","ㄍㄜ˙") },
+      { id: 60, word: "first", zh: zy("第","ㄉㄧˋ") + zy("一","ㄧ") + zy("個","ㄍㄜ˙") },
       { id: 61, word: "green", zh: zy("綠","ㄌㄩˋ") + zy("色","ㄙㄜˋ") },
       { id: 62, word: "envelope", zh: zy("信","ㄒㄧㄣˋ") + zy("封","ㄈㄥ") },
       { id: 63, word: "dragon", zh: zy("龍","ㄌㄨㄥˊ") },
@@ -1319,7 +958,6 @@
       { id: 100, word: "push", zh: zy("推","ㄊㄨㄟ") }
     ];
 
-    // 音效模組
     const SFX = {
       ctx: null,
       init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
@@ -1352,7 +990,6 @@
       }
     };
 
-    // 遊戲狀態變數
     let selectedStarterKey = 'pikachu';
     let currentMode = 'normal';
     let activeWordList = [];
@@ -1442,7 +1079,6 @@
       const voiceBtn = document.getElementById('q-voice-btn');
 
       if (currentMode === 'normal') {
-        // 一般攻擊：聽音選圖（圖片下方帶中文與注音）
         imgBox.style.display = 'none';
         prompt.innerHTML = `🎧 ${zy("請","ㄑㄧㄥˇ")}${zy("聽","ㄊㄧㄥ")}${zy("發","ㄈㄚ")}${zy("音","ㄧㄣ")}${zy("選","ㄒㄩㄢˇ")}${zy("圖","ㄊㄨˊ")}`;
         voiceBtn.style.display = 'inline-flex';
@@ -1450,17 +1086,15 @@
         renderChoices(item, 'image');
       } 
       else if (currentMode === 'special') {
-        // 特殊攻擊：看圖選單字
         imgBox.style.display = 'flex';
-        imgBox.innerHTML = getItemIconImg(item.id);
+        imgBox.innerHTML = getItemIconImg(item);
         prompt.innerHTML = item.zh;
         voiceBtn.style.display = 'none';
         renderChoices(item, 'word');
       } 
       else if (currentMode === 'evo') {
-        // 進化攻擊：看圖填寫
         imgBox.style.display = 'flex';
-        imgBox.innerHTML = getItemIconImg(item.id);
+        imgBox.innerHTML = getItemIconImg(item);
         prompt.innerHTML = item.zh;
         voiceBtn.style.display = 'inline-flex';
         document.getElementById('spell-input').value = '';
@@ -1479,9 +1113,8 @@
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
         if (displayType === 'image') {
-          // 聽音選圖：展示圖片，下方新增中文與右側注音
           btn.innerHTML = `
-            <div class="choice-icon-wrap">${getItemIconImg(opt.id)}</div>
+            <div class="choice-icon-wrap">${getItemIconImg(opt)}</div>
             <div class="choice-label-with-zy">${opt.zh}</div>
           `;
         } else {
@@ -1520,7 +1153,6 @@
       if (e.key === 'Enter') checkSpelling();
     });
 
-    // 成功命中：播放專屬招式動畫與加長進化大絕
     function handleSuccessAttack() {
       const conf = POKEMON_CONFIG[selectedStarterKey];
       const playerSprite = document.getElementById('player-sprite-box');
@@ -1548,13 +1180,11 @@
       } else if (currentMode === 'evo') {
         damage = 50;
         moveText = conf.evoMove;
-        animDuration = 2600; // 加長進化招式動畫時間至 2.6 秒
+        animDuration = 2600;
 
-        // 換成進化型態官方立繪
         playerImg.src = getOfficialArtUrl(conf.evoDexId);
         playerSprite.classList.add(conf.evoAnim);
 
-        // 背景專屬光效
         if (selectedStarterKey === 'pikachu') {
           fxLayer.className = 'fx-layer fx-thunder-sky';
           SFX.thunderHit();
@@ -1597,7 +1227,6 @@
       }, animDuration);
     }
 
-    // 答錯受到反擊
     function handlePlayerHurt(correctAnswer) {
       const enemySprite = document.getElementById('enemy-sprite-box');
       const playerSprite = document.getElementById('player-sprite-box');
@@ -1623,1114 +1252,6 @@
           playerSprite.classList.add('faint-away');
           setTimeout(() => {
             playerSprite.classList.remove('faint-away');
-            document.getElementById('poke-center-screen').style.display = 'flex';
-          }, 800);
-        } else {
-          advanceNextWord();
-        }
-      }, 1100);
-    }
-
-    function advanceNextWord() {
-      currentWordIndex++;
-      if (currentWordIndex >= activeWordList.length) {
-        activeWordList.sort(() => Math.random() - 0.5);
-        currentWordIndex = 0;
-      }
-      renderCurrentQuestion();
-    }
-
-    function updatePlayerHpUI() {
-      const bar = document.getElementById('player-hp-bar');
-      bar.style.width = `${playerHp}%`;
-      bar.style.background = playerHp > 40 ? 'var(--hp-green)' : 'var(--hp-danger)';
-    }
-
-    function updateEnemyHpUI() {
-      const bar = document.getElementById('enemy-hp-bar');
-      bar.style.width = `${enemyHp}%`;
-    }
-  </script>
-</body>
-</html>      margin: 0 1px;
-      line-height: 1;
-    }
-    .zy-char { font-size: 1.15em; line-height: 1; display: inline-block; }
-    .zy-tone {
-      writing-mode: vertical-rl;
-      font-size: 0.48em;
-      color: #666;
-      letter-spacing: -1px;
-      margin-left: 2px;
-      user-select: none;
-      line-height: 1;
-      text-align: center;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 680px;
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 20px;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.3);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 全屏彈窗：開始畫面與寶可夢中心 */
-    .overlay-screen {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(6px);
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .screen-title {
-      font-size: 1.8rem;
-      color: #e63946;
-      margin-bottom: 18px;
-    }
-
-    .starter-group {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .starter-card {
-      border: 3px solid #dee2e6;
-      border-radius: 16px;
-      padding: 10px 14px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      background: white;
-      width: 110px;
-    }
-    .starter-card:hover { transform: translateY(-4px); }
-    .starter-card.selected {
-      border-color: #e63946;
-      box-shadow: 0 6px 16px rgba(230, 57, 70, 0.35);
-      background: #fff5f5;
-    }
-    .starter-img { width: 75px; height: 75px; object-fit: contain; margin: 0 auto 6px; display: block; }
-
-    .range-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 20px;
-      font-size: 1.05rem;
-      font-weight: bold;
-    }
-    .range-input {
-      width: 65px;
-      padding: 6px 8px;
-      font-size: 1.1rem;
-      text-align: center;
-      border: 2px solid #adb5bd;
-      border-radius: 8px;
-    }
-
-    .btn-main {
-      background: #e63946;
-      color: white;
-      border: none;
-      padding: 12px 34px;
-      border-radius: 30px;
-      font-size: 1.25rem;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s, background 0.2s;
-      box-shadow: 0 6px 14px rgba(230, 57, 70, 0.4);
-    }
-    .btn-main:hover { background: #d62828; transform: scale(1.05); }
-
-    /* 戰鬥畫面 */
-    .battle-field {
-      background: linear-gradient(180deg, #c7e9fe 0%, #a2d2ff 60%, #74c69d 60%, #40916c 100%);
-      border-radius: 20px;
-      border: 4px solid #f1faee;
-      box-shadow: inset 0 4px 10px rgba(0,0,0,0.15);
-      padding: 14px 18px;
-      height: 220px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 14px;
-    }
-
-    .fighter-side {
-      width: 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      z-index: 5;
-    }
-    .fighter-hud {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #ced4da;
-      border-radius: 12px;
-      padding: 4px 8px;
-      width: 100%;
-      margin-bottom: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .hud-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
-    .hp-container {
-      width: 100%;
-      height: 9px;
-      background: #dee2e6;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .hp-fill {
-      height: 100%;
-      width: 100%;
-      background: var(--hp-green);
-      transition: width 0.5s ease-out;
-    }
-
-    .poke-img-box {
-      width: 110px;
-      height: 110px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      filter: drop-shadow(0 8px 6px rgba(0,0,0,0.25));
-    }
-    .poke-official-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    /* 戰鬥動畫 */
-    .idle-bounce { animation: idle 2.5s infinite ease-in-out; }
-    @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
-
-    .attack-forward { animation: player-atk 0.6s ease; }
-    @keyframes player-atk {
-      0% { transform: translateX(0); }
-      40% { transform: translateX(110px) scale(1.15); }
-      100% { transform: translateX(0); }
-    }
-    .enemy-attack-forward { animation: enemy-atk 0.6s ease; }
-    @keyframes enemy-atk {
-      0% { transform: translateX(0); }
-      40% { transform: translateX(-110px) scale(1.15); }
-      100% { transform: translateX(0); }
-    }
-    .got-hit { animation: hurt 0.5s ease; }
-    @keyframes hurt {
-      0%, 100% { filter: drop-shadow(0 8px 6px rgba(0,0,0,0.25)); }
-      25%, 75% { filter: brightness(3) saturate(0); transform: translateX(8px); }
-      50% { transform: translateX(-8px); }
-    }
-    .faint-away { animation: faint 0.7s forwards ease; }
-    @keyframes faint { 100% { transform: translateY(40px) scale(0.2); opacity: 0; } }
-
-    /* 招式選單 */
-    .attack-menu {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-    .move-btn {
-      flex: 1;
-      padding: 10px 4px;
-      border: 2px solid transparent;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: bold;
-      cursor: pointer;
-      background: #f8f9fa;
-      color: #343a40;
-      transition: all 0.2s;
-    }
-    .move-btn.active {
-      background: #e63946;
-      color: white;
-      box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
-    }
-    .move-btn small { display: block; font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
-
-    /* 題目區塊 */
-    .question-panel {
-      background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 14px;
-    }
-    .q-banner {
-      display: inline-block;
-      background: #457b9d;
-      color: white;
-      padding: 2px 14px;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      margin-bottom: 6px;
-    }
-    .q-main {
-      font-size: 1.6rem;
-      font-weight: bold;
-      min-height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-    .q-item-icon-box {
-      width: 75px;
-      height: 75px;
-      margin: 4px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .item-icon-img {
-      width: 70px;
-      height: 70px;
-      object-fit: contain;
-    }
-
-    .speaker-btn {
-      background: #ffb703;
-      border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      font-size: 1.3rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.1s;
-    }
-    .speaker-btn:hover { transform: scale(1.1); }
-
-    /* 聽音選圖 & 選字按鈕 */
-    .choices-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .choice-btn {
-      background: white;
-      border: 2px solid #dee2e6;
-      border-radius: 14px;
-      padding: 10px;
-      font-size: 1.25rem;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 74px;
-      transition: all 0.2s;
-    }
-    .choice-btn:hover { border-color: var(--primary); background: #fff5f5; }
-    .choice-btn.correct { background: #d8f3dc !important; border-color: #2ec4b6 !important; }
-    .choice-btn.wrong { background: #ffe3e3 !important; border-color: #e71d36 !important; }
-    .choice-icon-wrap {
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .choice-icon-wrap img {
-      width: 50px;
-      height: 50px;
-      object-fit: contain;
-    }
-
-    .spell-wrap { margin: 10px 0; }
-    .spell-input {
-      font-size: 1.4rem;
-      padding: 8px 16px;
-      width: 65%;
-      max-width: 260px;
-      border: 2px solid #adb5bd;
-      border-radius: 10px;
-      text-align: center;
-      outline: none;
-      text-transform: lowercase;
-    }
-    .spell-input:focus { border-color: var(--primary); }
-    .btn-attack-confirm {
-      margin-top: 10px;
-      background: #e63946;
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .battle-msg {
-      min-height: 38px;
-      margin-top: 10px;
-      font-size: 1.15rem;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .battle-msg.win { color: #2ec4b6; }
-    .battle-msg.lose { color: #e71d36; }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-    <!-- ==================== 1. 開始遊戲畫面 ==================== -->
-    <div id="start-screen" class="overlay-screen">
-      <h2 class="screen-title">
-        <span class="zy-block"><span class="zy-char">寶</span><span class="zy-tone">ㄅㄠˇ</span></span>
-        <span class="zy-block"><span class="zy-char">可</span><span class="zy-tone">ㄎㄜˇ</span></span>
-        <span class="zy-block"><span class="zy-char">夢</span><span class="zy-tone">ㄇㄥˋ</span></span>
-        <span class="zy-block"><span class="zy-char">單</span><span class="zy-tone">ㄉㄢ</span></span>
-        <span class="zy-block"><span class="zy-char">字</span><span class="zy-tone">ㄗˋ</span></span>
-        <span class="zy-block"><span class="zy-char">大</span><span class="zy-tone">ㄉㄚˋ</span></span>
-        <span class="zy-block"><span class="zy-char">對</span><span class="zy-tone">ㄉㄨㄟˋ</span></span>
-        <span class="zy-block"><span class="zy-char">決</span><span class="zy-tone">ㄐㄩㄝˊ</span></span>
-      </h2>
-
-      <p style="font-weight: bold; margin-bottom: 12px; color:#495057;">
-        <span class="zy-block"><span class="zy-char">請</span><span class="zy-tone">ㄑㄧㄥˇ</span></span>
-        <span class="zy-block"><span class="zy-char">選</span><span class="zy-tone">ㄒㄩㄢˇ</span></span>
-        <span class="zy-block"><span class="zy-char">擇</span><span class="zy-tone">ㄗㄜˊ</span></span>
-        <span class="zy-block"><span class="zy-char">初</span><span class="zy-tone">ㄔㄨ</span></span>
-        <span class="zy-block"><span class="zy-char">始</span><span class="zy-tone">ㄕˇ</span></span>
-        <span class="zy-block"><span class="zy-char">夥</span><span class="zy-tone">ㄏㄨㄛˇ</span></span>
-        <span class="zy-block"><span class="zy-char">伴</span><span class="zy-tone">ㄅㄢˋ</span></span>：
-      </p>
-
-      <div class="starter-group">
-        <!-- 皮卡丘 -->
-        <div class="starter-card selected" onclick="selectStarter('pikachu', this)">
-          <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu" />
-          <div><span class="zy-block"><span class="zy-char">皮</span><span class="zy-tone">ㄆㄧˊ</span></span><span class="zy-block"><span class="zy-char">卡</span><span class="zy-tone">ㄎㄚˇ</span></span><span class="zy-block"><span class="zy-char">丘</span><span class="zy-tone">ㄑㄧㄡ</span></span></div>
-        </div>
-        <!-- 伊布 -->
-        <div class="starter-card" onclick="selectStarter('eevee', this)">
-          <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png" alt="Eevee" />
-          <div><span class="zy-block"><span class="zy-char">伊</span><span class="zy-tone">ㄧ</span></span><span class="zy-block"><span class="zy-char">布</span><span class="zy-tone">ㄅㄨˋ</span></span></div>
-        </div>
-        <!-- 小火龍 -->
-        <div class="starter-card" onclick="selectStarter('charmander', this)">
-          <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="Charmander" />
-          <div><span class="zy-block"><span class="zy-char">小</span><span class="zy-tone">ㄒㄧㄠˇ</span></span><span class="zy-block"><span class="zy-char">火</span><span class="zy-tone">ㄏㄨㄛˇ</span></span><span class="zy-block"><span class="zy-char">龍</span><span class="zy-tone">ㄌㄨㄥˊ</span></span></div>
-        </div>
-      </div>
-
-      <div class="range-group">
-        <span><span class="zy-block"><span class="zy-char">單</span><span class="zy-tone">ㄉㄢ</span></span><span class="zy-block"><span class="zy-char">字</span><span class="zy-tone">ㄗˋ</span></span><span class="zy-block"><span class="zy-char">範</span><span class="zy-tone">ㄈㄢˋ</span></span><span class="zy-block"><span class="zy-char">圍</span><span class="zy-tone">ㄨㄟˊ</span></span>：</span>
-        <input type="number" id="range-start" class="range-input" value="1" min="1" max="100"/>
-        <span>~</span>
-        <input type="number" id="range-end" class="range-input" value="25" min="1" max="100"/>
-        <span><span class="zy-block"><span class="zy-char">號</span><span class="zy-tone">ㄏㄠˋ</span></span></span>
-      </div>
-
-      <button class="btn-main" onclick="startGame()">
-        <span class="zy-block"><span class="zy-char">出</span><span class="zy-tone">ㄔㄨ</span></span>
-        <span class="zy-block"><span class="zy-char">發</span><span class="zy-tone">ㄈㄚ</span></span>
-        <span class="zy-block"><span class="zy-char">冒</span><span class="zy-tone">ㄇㄠˋ</span></span>
-        <span class="zy-block"><span class="zy-char">險</span><span class="zy-tone">ㄒㄧㄢˇ</span></span>！
-      </button>
-    </div>
-
-    <!-- ==================== 2. 寶可夢中心（Game Over 畫面） ==================== -->
-    <div id="poke-center-screen" class="overlay-screen" style="display: none;">
-      <div style="font-size: 3.5rem; margin-bottom: 10px;">🏥</div>
-      <h2 style="color: #e63946; margin-bottom: 12px;">
-        <span class="zy-block"><span class="zy-char">寶</span><span class="zy-tone">ㄅㄠˇ</span></span>
-        <span class="zy-block"><span class="zy-char">可</span><span class="zy-tone">ㄎㄜˇ</span></span>
-        <span class="zy-block"><span class="zy-char">夢</span><span class="zy-tone">ㄇㄥˋ</span></span>
-        <span class="zy-block"><span class="zy-char">中</span><span class="zy-tone">ㄓㄨㄥ</span></span>
-        <span class="zy-block"><span class="zy-char">心</span><span class="zy-tone">ㄒㄧㄣ</span></span>
-      </h2>
-      <p style="font-size: 1.25rem; font-weight: bold; margin-bottom: 24px; color: #495057;">
-        <span class="zy-block"><span class="zy-char">寶</span><span class="zy-tone">ㄅㄠˇ</span></span>
-        <span class="zy-block"><span class="zy-char">可</span><span class="zy-tone">ㄎㄜˇ</span></span>
-        <span class="zy-block"><span class="zy-char">夢</span><span class="zy-tone">ㄇㄥˋ</span></span>
-        <span class="zy-block"><span class="zy-char">體</span><span class="zy-tone">ㄊㄧˇ</span></span>
-        <span class="zy-block"><span class="zy-char">力</span><span class="zy-tone">ㄌㄧˋ</span></span>
-        <span class="zy-block"><span class="zy-char">耗</span><span class="zy-tone">ㄏㄠˋ</span></span>
-        <span class="zy-block"><span class="zy-char">盡</span><span class="zy-tone">ㄐㄧㄣˋ</span></span>
-        <span class="zy-block"><span class="zy-char">了</span><span class="zy-tone">˙ㄌㄜ</span></span>！<br>
-        <span class="zy-block"><span class="zy-char">喬</span><span class="zy-tone">ㄑㄧㄠˊ</span></span>
-        <span class="zy-block"><span class="zy-char">伊</span><span class="zy-tone">ㄧ</span></span>
-        <span class="zy-block"><span class="zy-char">小</span><span class="zy-tone">ㄒㄧㄠˇ</span></span>
-        <span class="zy-block"><span class="zy-char">姐</span><span class="zy-tone">ㄐㄧㄝˇ</span></span>
-        <span class="zy-block"><span class="zy-char">已</span><span class="zy-tone">ㄧˇ</span></span>
-        <span class="zy-block"><span class="zy-char">為</span><span class="zy-tone">ㄨㄟˊ</span></span>
-        <span class="zy-block"><span class="zy-char">你</span><span class="zy-tone">ㄋㄧˇ</span></span>
-        <span class="zy-block"><span class="zy-char">恢</span><span class="zy-tone">ㄏㄨㄟ</span></span>
-        <span class="zy-block"><span class="zy-char">復</span><span class="zy-tone">ㄈㄨˋ</span></span>
-        <span class="zy-block"><span class="zy-char">全</span><span class="zy-tone">ㄑㄩㄢˊ</span></span>
-        <span class="zy-block"><span class="zy-char">部</span><span class="zy-tone">ㄅㄨˋ</span></span>
-        <span class="zy-block"><span class="zy-char">元</span><span class="zy-tone">ㄩㄢˊ</span></span>
-        <span class="zy-block"><span class="zy-char">氣</span><span class="zy-tone">ㄑㄧˋ</span></span>！
-      </p>
-      <button class="btn-main" onclick="returnToStart()">
-        <span class="zy-block"><span class="zy-char">重</span><span class="zy-tone">ㄔㄨㄥˊ</span></span>
-        <span class="zy-block"><span class="zy-char">新</span><span class="zy-tone">ㄒㄧㄣ</span></span>
-        <span class="zy-block"><span class="zy-char">挑</span><span class="zy-tone">ㄊㄧㄠˇ</span></span>
-        <span class="zy-block"><span class="zy-char">戰</span><span class="zy-tone">ㄓㄢˋ</span></span>
-      </button>
-    </div>
-
-    <!-- ==================== 3. 主戰鬥舞台 ==================== -->
-    <div class="battle-field">
-      <!-- 玩家寶可夢 -->
-      <div class="fighter-side">
-        <div class="fighter-hud">
-          <div class="hud-header">
-            <span id="player-hud-name">皮卡丘</span>
-            <span style="color:#e63946;">Lv.25</span>
-          </div>
-          <div class="hp-container">
-            <div id="player-hp-bar" class="hp-fill"></div>
-          </div>
-        </div>
-        <div class="poke-img-box idle-bounce" id="player-sprite-box">
-          <img id="player-img" class="poke-official-img" src="" alt="Player Pokemon" />
-        </div>
-      </div>
-
-      <!-- 對手野生寶可夢 -->
-      <div class="fighter-side">
-        <div class="fighter-hud">
-          <div class="hud-header">
-            <span id="enemy-hud-name">野生寶可夢</span>
-            <span style="color:#6c757d;">Lv.20</span>
-          </div>
-          <div class="hp-container">
-            <div id="enemy-hp-bar" class="hp-fill"></div>
-          </div>
-        </div>
-        <div class="poke-img-box" id="enemy-sprite-box">
-          <img id="enemy-img" class="poke-official-img" src="" alt="Enemy Pokemon" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ==================== 4. 招式攻擊選單 ==================== -->
-    <div class="attack-menu">
-      <button class="move-btn active" id="btn-mode-normal" onclick="changeMode('normal')">
-        <span id="move-name-normal">鐵尾</span>
-        <small>(一般: 扣1/5血)</small>
-      </button>
-      <button class="move-btn" id="btn-mode-special" onclick="changeMode('special')">
-        <span id="move-name-special">電擊</span>
-        <small>(特殊: 扣1/4血)</small>
-      </button>
-      <button class="move-btn" id="btn-mode-evo" onclick="changeMode('evo')">
-        <span id="move-name-evo">雷丘·打雷</span>
-        <small>(進化: 扣1/2血)</small>
-      </button>
-    </div>
-
-    <!-- ==================== 5. 出題作答區域 ==================== -->
-    <div class="question-panel">
-      <div class="q-banner" id="q-category">題目類別</div>
-      <div class="q-item-icon-box" id="q-image-box" style="display: none;"></div>
-      <div class="q-main">
-        <span id="q-prompt"></span>
-        <button id="q-voice-btn" class="speaker-btn" onclick="speakCurrentWord()">🔊</button>
-      </div>
-    </div>
-
-    <!-- 選項按鈕 (一般攻擊 & 特殊攻擊) -->
-    <div id="quiz-choices" class="choices-grid"></div>
-
-    <!-- 填寫輸入框 (進化攻擊) -->
-    <div id="spell-panel" class="spell-wrap" style="display: none;">
-      <input type="text" id="spell-input" class="spell-input" placeholder="請輸入單字..." autocomplete="off" />
-      <br>
-      <button class="btn-attack-confirm" onclick="checkSpelling()">
-        <span class="zy-block"><span class="zy-char">使</span><span class="zy-tone">ㄕˇ</span></span>
-        <span class="zy-block"><span class="zy-char">出</span><span class="zy-tone">ㄔㄨ</span></span>
-        <span class="zy-block"><span class="zy-char">進</span><span class="zy-tone">ㄐㄧㄣˋ</span></span>
-        <span class="zy-block"><span class="zy-char">化</span><span class="zy-tone">ㄏㄨㄚˋ</span></span>
-        <span class="zy-block"><span class="zy-char">大</span><span class="zy-tone">ㄉㄚˋ</span></span>
-        <span class="zy-block"><span class="zy-char">絕</span><span class="zy-tone">ㄐㄩㄝˊ</span></span>！
-      </button>
-    </div>
-
-    <div id="battle-message" class="battle-msg"></div>
-  </div>
-
-  <script>
-    // 注音結構標記
-    function zy(char, tone) {
-      return `<span class="zy-block"><span class="zy-char">${char}</span><span class="zy-tone">${tone}</span></span>`;
-    }
-
-    // 官方立繪 CDN URL 產生器
-    function getOfficialArtUrl(dexId) {
-      return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dexId}.png`;
-    }
-
-    // ==================== 官方真實寶可夢資料庫 ====================
-    const POKEMON_CONFIG = {
-      pikachu: {
-        dexId: 25,
-        evoDexId: 26, // 雷丘
-        nameHtml: zy("皮","ㄆㄧˊ") + zy("卡","ㄎㄚˇ") + zy("丘","ㄑㄧㄡ"),
-        normalMove: zy("鐵","ㄊㄧㄝˇ") + zy("尾","ㄨㄟˇ"),
-        specialMove: zy("電","ㄉㄧㄢˋ") + zy("擊","ㄐㄧˊ"),
-        evoMove: zy("雷","ㄌㄟˊ") + zy("丘","ㄑㄧㄡ") + "·" + zy("打","ㄉㄚˇ") + zy("雷","ㄌㄟˊ")
-      },
-      eevee: {
-        dexId: 133,
-        evoDexId: 700, // 仙子伊布
-        nameHtml: zy("伊","ㄧ") + zy("布","ㄅㄨˋ"),
-        normalMove: zy("撞","ㄓㄨㄤˋ") + zy("擊","ㄐㄧˊ"),
-        specialMove: zy("巨","ㄐㄩˋ") + zy("聲","ㄕㄥ") + zy("光","ㄍㄨㄤ") + zy("線","ㄒㄧㄢˋ"),
-        evoMove: zy("仙","ㄒㄧㄢ") + zy("子","ㄗˇ") + zy("伊","ㄧ") + zy("布","ㄅㄨˋ") + "·" + zy("月","ㄩㄝˋ") + zy("亮","ㄌㄧㄤˋ") + zy("之","ㄓ") + zy("力","ㄌㄧˋ")
-      },
-      charmander: {
-        dexId: 4,
-        evoDexId: 6, // 噴火龍
-        nameHtml: zy("小","ㄒㄧㄠˇ") + zy("火","ㄏㄨㄛˇ") + zy("龍","ㄌㄨㄥˊ"),
-        normalMove: zy("爪","ㄓㄠˇ") + zy("擊","ㄐㄧˊ"),
-        specialMove: zy("噴","ㄆㄣ") + zy("射","ㄕㄜˋ") + zy("火","ㄏㄨㄛˇ") + zy("焰","ㄧㄢˋ"),
-        evoMove: zy("噴","ㄆㄣ") + zy("火","ㄏㄨㄛˇ") + zy("龍","ㄌㄨㄥˊ") + "·" + zy("大","ㄉㄚˋ") + zy("字","ㄗˋ") + zy("爆","ㄅㄠˋ") + zy("炎","ㄧㄢˊ")
-      }
-    };
-
-    // 野生對手官方立繪庫
-    const WILD_ENEMIES = [
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("波","ㄅㄛ") + zy("波","ㄅㄛ"), dexId: 16 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("小","ㄒㄧㄠˇ") + zy("拉","ㄌㄚ") + zy("達","ㄉㄚˊ"), dexId: 19 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("綠","ㄌㄩˋ") + zy("毛","ㄇㄠˊ") + zy("蟲","ㄔㄨㄥˊ"), dexId: 10 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("超","ㄔㄠ") + zy("音","ㄧㄣ") + zy("蝠","ㄈㄨˊ"), dexId: 41 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("耿","ㄍㄥˇ") + zy("鬼","ㄍㄨㄟˇ"), dexId: 94 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("卡","ㄎㄚˇ") + zy("比","ㄅㄧˇ") + zy("獸","ㄕㄡˋ"), dexId: 143 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("胖","ㄆㄤˋ") + zy("丁","ㄉㄧㄥ"), dexId: 39 },
-      { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("可","ㄎㄜˇ") + zy("達","ㄉㄚˊ") + zy("鴨","ㄧㄚ"), dexId: 54 }
-    ];
-
-    // ==================== 1~100 題具體物件圖標庫 (Twemoji Unicode Hex) ====================
-    // 每個單字皆對應真實具體的物體圖標
-    const EMOJI_MAP = {
-      1: "1f96b", // jam -> canned food / jam
-      2: "1f30a", // dam -> water wave
-      3: "1f987", // bat -> bat
-      4: "1f431", // cat -> cat
-      5: "1f9e2", // cap -> cap
-      6: "1f9b5", // lap / leg -> leg
-      7: "1f468", // man -> man
-      8: "2728",  // new -> sparkle
-      9: "1f44d", // like -> thumbs up
-      10: "1f440", // see -> eyes
-      11: "1f506", // little -> small bright
-      12: "1f98b", // butterfly -> butterfly
-      13: "1f438", // frog -> frog
-      14: "1f91d", // have -> handshake / hold
-      15: "0033-fe0f-20e3", // three -> 3
-      16: "1f389", // fun -> party popper
-      17: "2139-fe0f", // about -> info
-      18: "1f58a-fe0f", // pen -> pen
-      19: "270f-fe0f", // pencil -> pencil
-      20: "1f4d6", // book -> open book
-      21: "1f9f9", // eraser -> eraser / broom
-      22: "1f4cf", // ruler -> straight ruler
-      23: "1fac0", // body -> anatomical heart / body
-      24: "1f442", // ear -> ear
-      25: "1f441-fe0f", // eye -> eye
-      26: "1f96b", // can -> can
-      27: "1f6cf-fe0f", // bed -> bed
-      28: "1f534", // red -> red circle
-      29: "1f9d1-200d-2695-fe0f", // vet -> health worker
-      30: "1f945", // net -> goal net
-      31: "1f9d2", // kid -> child
-      32: "1f372", // lid -> pot with lid
-      33: "1f465", // people -> busts
-      34: "2709-fe0f", // letter -> envelope
-      35: "1f50e", // look -> magnifying glass
-      36: "27a1-fe0f", // another -> arrow
-      37: "1f60b", // delicious -> yummy
-      38: "1f37f", // snack -> popcorn
-      39: "1f527", // use -> wrench tool
-      40: "1f97c", // doctor -> lab coat
-      41: "1f4e6", // package -> package box
-      42: "1f3a1", // carnival -> ferris wheel
-      43: "1f392", // backpack -> school backpack
-      44: "23fa",  // circle -> record circle
-      45: "1f53a", // triangle -> red triangle
-      46: "25ad-fe0f", // rectangle -> rectangle
-      47: "2b1b",  // square -> black square
-      48: "1f443", // nose -> nose
-      49: "1f9e0", // sense -> brain
-      50: "270c-fe0f", // skin -> hand skin
-      51: "1f418", // big -> elephant
-      52: "26cf-fe0f", // dig -> pick
-      53: "1f943", // mix -> tumbler / mixing
-      54: "1f528", // fix -> hammer
-      55: "1f94a", // hit -> boxing glove
-      56: "1f455", // fit -> t-shirt fit
-      57: "1fad7", // dip -> pouring liquid
-      58: "1f38a", // celebration -> confetti ball
-      59: "1f987", // costume -> bat costume
-      60: "1f947", // first -> 1st medal
-      61: "1f7e2", // green -> green circle
-      62: "2709-fe0f", // envelope -> envelope
-      63: "1f409", // dragon -> dragon
-      64: "1f388", // parade -> balloon parade
-      65: "26aa",  // white -> white circle
-      66: "1f535", // blue -> blue circle
-      67: "1f3d8-fe0f", // community -> houses
-      68: "2b55",  // oval -> hollow circle
-      69: "1f468", // father -> man
-      70: "1f469", // mother -> woman
-      71: "1f474", // grandfather -> old man
-      72: "1f475", // grandmother -> old woman
-      73: "1f445", // tongue -> tongue
-      74: "1f331", // grow -> seedling
-      75: "1f338", // flower -> cherry blossom
-      76: "1fa93", // rip -> axe ripping
-      77: "1f9f7", // pin -> safety pin
-      78: "1f525", // hot -> fire
-      79: "1f372", // pot -> pot
-      80: "1f98a", // fox -> fox
-      81: "1f4e6", // box -> box
-      82: "1f9f9", // mop -> mop
-      83: "1fab5", // log -> wood log
-      84: "1f415", // dog -> dog
-      85: "1fac2", // hug -> people hugging
-      86: "1f41b", // bug -> bug
-      87: "2600-fe0f", // sun -> sun
-      88: "1f3c3", // run -> runner
-      89: "1f9bf", // mud -> mud puddle / liquid
-      90: "1f337", // bud -> tulip bud
-      91: "1f964", // cup -> cup with straw
-      92: "1f3da-fe0f", // hut -> hut
-      93: "1f3f3-fe0f", // country -> flag
-      94: "262f-fe0f", // symbol -> symbol
-      95: "27a1-fe0f", // then -> arrow
-      96: "1f467", // sister -> girl
-      97: "1f466", // brother -> boy
-      98: "1f343", // leaf -> leaf
-      99: "1f91c", // pull -> fist pulling
-      100: "1f91b" // push -> fist pushing
-    };
-
-    function getItemIconImg(id) {
-      const code = EMOJI_MAP[id] || "1f4da";
-      return `<img class="item-icon-img" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${code}.png" alt="icon" onerror="this.src='https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4da.png'" />`;
-    }
-
-    // ==================== 1~100 單字清單 (Word List for Grade One) ====================
-    const WORD_DATABASE = [
-      { id: 1, word: "jam", zh: zy("果","ㄍㄨㄛˇ") + zy("醬","ㄐㄧㄤˋ") },
-      { id: 2, word: "dam", zh: zy("水","ㄕㄨㄟˇ") + zy("壩","ㄅㄚˋ") },
-      { id: 3, word: "bat", zh: zy("蝙","ㄅㄧㄢ") + zy("蝠","ㄈㄨˊ") },
-      { id: 4, word: "cat", zh: zy("貓","ㄇㄠ") + zy("咪","ㄇㄧ") },
-      { id: 5, word: "cap", zh: zy("帽","ㄇㄠˋ") + zy("子","ㄗ˙") },
-      { id: 6, word: "lap", zh: zy("大","ㄉㄚˋ") + zy("腿","ㄊㄨㄟˇ") + zy("部","ㄅㄨˋ") },
-      { id: 7, word: "man", zh: zy("男","ㄋㄢˊ") + zy("人","ㄖㄣˊ") },
-      { id: 8, word: "new", zh: zy("新","ㄒㄧㄣ") + zy("的","˙ㄉㄜ") },
-      { id: 9, word: "like", zh: zy("像","ㄒㄧㄤˋ") + zy("是","ㄕˋ") + " / " + zy("喜","ㄒㄧˇ") + zy("歡","ㄏㄨㄢ") },
-      { id: 10, word: "see", zh: zy("看","ㄎㄢˋ") },
-      { id: 11, word: "little", zh: zy("小","ㄒㄧㄠˇ") + zy("的","˙ㄉㄜ") },
-      { id: 12, word: "butterfly", zh: zy("蝴","ㄏㄨˊ") + zy("蝶","ㄉㄧㄝˊ") },
-      { id: 13, word: "frog", zh: zy("青","ㄑㄧㄥ") + zy("蛙","ㄨㄚ") },
-      { id: 14, word: "have", zh: zy("擁","ㄩㄥˇ") + zy("有","ㄧㄡˇ") },
-      { id: 15, word: "three", zh: zy("三","ㄙㄢ") },
-      { id: 16, word: "fun", zh: zy("好","ㄏㄠˇ") + zy("玩","ㄨㄢˊ") },
-      { id: 17, word: "about", zh: zy("關","ㄍㄨㄢ") + zy("於","ㄩˊ") },
-      { id: 18, word: "pen", zh: zy("筆","ㄅㄧˇ") },
-      { id: 19, word: "pencil", zh: zy("鉛","ㄑㄧㄢ") + zy("筆","ㄅㄧˇ") },
-      { id: 20, word: "book", zh: zy("書","ㄕㄨ") + zy("本","ㄅㄣˇ") },
-      { id: 21, word: "eraser", zh: zy("橡","ㄒㄧㄤˋ") + zy("皮","ㄆㄧˊ") + zy("擦","ㄘㄚ") },
-      { id: 22, word: "ruler", zh: zy("尺","ㄔˇ") },
-      { id: 23, word: "body", zh: zy("身","ㄕㄣ") + zy("體","ㄊㄧˇ") },
-      { id: 24, word: "ear", zh: zy("耳","ㄦˇ") + zy("朵","ㄉㄨㄛˇ") },
-      { id: 25, word: "eye", zh: zy("眼","ㄧㄢˇ") + zy("睛","ㄐㄧㄥ") },
-      { id: 26, word: "can", zh: zy("可","ㄎㄜˇ") + zy("以","ㄧˇ") + " / " + zy("罐","ㄍㄨㄢˋ") + zy("頭","ㄊㄡˊ") },
-      { id: 27, word: "bed", zh: zy("床","ㄔㄨㄤˊ") },
-      { id: 28, word: "red", zh: zy("紅","ㄏㄨㄥˊ") + zy("色","ㄙㄜˋ") },
-      { id: 29, word: "vet", zh: zy("獸","ㄕㄡˋ") + zy("醫","ㄧ") },
-      { id: 30, word: "net", zh: zy("網","ㄨㄤˇ") + zy("子","ㄗ˙") },
-      { id: 31, word: "kid", zh: zy("小","ㄒㄧㄠˇ") + zy("朋","ㄆㄥˊ") + zy("友","ㄧㄡˇ") },
-      { id: 32, word: "lid", zh: zy("蓋","ㄍㄞˋ") + zy("子","ㄗ˙") },
-      { id: 33, word: "people", zh: zy("人","ㄖㄣˊ") + zy("們","ㄇㄣ˙") },
-      { id: 34, word: "letter", zh: zy("信","ㄒㄧㄣˋ") + " / " + zy("字","ㄗˋ") + zy("母","ㄇㄨˇ") },
-      { id: 35, word: "look", zh: zy("看","ㄎㄢˋ") },
-      { id: 36, word: "another", zh: zy("另","ㄌㄧㄥˋ") + zy("一","ㄧ") + zy("個","ㄍㄜ˙") },
-      { id: 37, word: "delicious", zh: zy("美","ㄇㄟˇ") + zy("味","ㄨㄟˋ") + zy("的","˙ㄉㄜ") },
-      { id: 38, word: "snack", zh: zy("點","ㄉㄧㄢˇ") + zy("心","ㄒㄧㄣ") },
-      { id: 39, word: "use", zh: zy("用","ㄩㄥˋ") },
-      { id: 40, word: "doctor", zh: zy("醫","ㄧ") + zy("生","ㄕㄥ") },
-      { id: 41, word: "package", zh: zy("包","ㄅㄠ") + zy("裹","ㄍㄨㄛˇ") },
-      { id: 42, word: "carnival", zh: zy("嘉","ㄐㄧㄚ") + zy("年","ㄋㄧㄢˊ") + zy("華","ㄏㄨㄚˊ") },
-      { id: 43, word: "backpack", zh: zy("背","ㄅㄟ") + zy("包","ㄅㄠ") },
-      { id: 44, word: "circle", zh: zy("圓","ㄩㄢˊ") + zy("形","ㄒㄧㄥˊ") },
-      { id: 45, word: "triangle", zh: zy("三","ㄙㄢ") + zy("角","ㄐㄧㄠˇ") + zy("形","ㄒㄧㄥˊ") },
-      { id: 46, word: "rectangle", zh: zy("長","ㄔㄤˊ") + zy("方","ㄈㄤ") + zy("形","ㄒㄧㄥˊ") },
-      { id: 47, word: "square", zh: zy("正","ㄓㄥˋ") + zy("方","ㄈㄤ") + zy("形","ㄒㄧㄥˊ") },
-      { id: 48, word: "nose", zh: zy("鼻","ㄅㄧˊ") + zy("子","ㄗ˙") },
-      { id: 49, word: "sense", zh: zy("感","ㄍㄢˇ") + zy("官","ㄍㄨㄢ") },
-      { id: 50, word: "skin", zh: zy("皮","ㄆㄧˊ") + zy("膚","ㄈㄨ") },
-      { id: 51, word: "big", zh: zy("大","ㄉㄚˋ") + zy("的","˙ㄉㄜ") },
-      { id: 52, word: "dig", zh: zy("挖","ㄨㄚ") },
-      { id: 53, word: "mix", zh: zy("攪","ㄐㄧㄠˇ") + zy("拌","ㄅㄢˋ") },
-      { id: 54, word: "fix", zh: zy("修","ㄒㄧㄡ") + zy("理","ㄌㄧˇ") },
-      { id: 55, word: "hit", zh: zy("打","ㄉㄚˇ") },
-      { id: 56, word: "fit", zh: zy("合","ㄏㄜˊ") + zy("適","ㄕˋ") + zy("的","˙ㄉㄜ") },
-      { id: 57, word: "dip", zh: zy("沾","ㄓㄢ") + zy("醬","ㄐㄧㄤˋ") },
-      { id: 58, word: "celebration", zh: zy("慶","ㄑㄧㄥˋ") + zy("祝","ㄓㄨˋ") },
-      { id: 59, word: "costume", zh: zy("服","ㄈㄨˊ") + zy("裝","ㄓㄨㄤ") },
-      { id: 60, word: "first", zh: zy("第","ㄉㄧˋ") + zy("一","ㄧ") + zy("個","ㄍㄜ˙") },
-      { id: 61, word: "green", zh: zy("綠","ㄌㄩˋ") + zy("色","ㄙㄜˋ") },
-      { id: 62, word: "envelope", zh: zy("信","ㄒㄧㄣˋ") + zy("封","ㄈㄥ") },
-      { id: 63, word: "dragon", zh: zy("龍","ㄌㄨㄥˊ") },
-      { id: 64, word: "parade", zh: zy("遊","ㄧㄡˊ") + zy("行","ㄒㄧㄥˊ") },
-      { id: 65, word: "white", zh: zy("白","ㄅㄞˊ") + zy("色","ㄙㄜˋ") },
-      { id: 66, word: "blue", zh: zy("藍","ㄌㄢˊ") + zy("色","ㄙㄜˋ") },
-      { id: 67, word: "community", zh: zy("社","ㄕㄜˋ") + zy("區","ㄑㄩ") },
-      { id: 68, word: "oval", zh: zy("橢","ㄊㄨㄛˇ") + zy("圓","ㄩㄢˊ") + zy("形","ㄒㄧㄥˊ") },
-      { id: 69, word: "father", zh: zy("爸","ㄅㄚˋ") + zy("爸","ㄅㄚˋ") },
-      { id: 70, word: "mother", zh: zy("媽","ㄇㄚ") + zy("媽","ㄇㄚ") },
-      { id: 71, word: "grandfather", zh: zy("爺","ㄧㄝˊ") + zy("爺","ㄧㄝˊ") + " / " + zy("外","ㄨㄞˋ") + zy("公","ㄍㄨㄥ") },
-      { id: 72, word: "grandmother", zh: zy("奶","ㄋㄞˇ") + zy("奶","ㄋㄞˇ") + " / " + zy("外","ㄨㄞˋ") + zy("婆","ㄆㄛˊ") },
-      { id: 73, word: "tongue", zh: zy("舌","ㄕㄜˊ") + zy("頭","ㄊㄡ˙") },
-      { id: 74, word: "grow", zh: zy("成","ㄔㄥˊ") + zy("長","ㄓㄤˇ") },
-      { id: 75, word: "flower", zh: zy("花","ㄏㄨㄚ") },
-      { id: 76, word: "rip", zh: zy("撕","ㄙ") + zy("開","ㄎㄞ") },
-      { id: 77, word: "pin", zh: zy("別","ㄅㄧㄝˊ") + zy("針","ㄓㄣ") },
-      { id: 78, word: "hot", zh: zy("熱","ㄖㄜˋ") + zy("的","˙ㄉㄜ") + " / " + zy("辣","ㄌㄚˋ") + zy("的","˙ㄉㄜ") },
-      { id: 79, word: "pot", zh: zy("鍋","ㄍㄨㄛ") + zy("子","ㄗ˙") },
-      { id: 80, word: "fox", zh: zy("狐","ㄏㄨˊ") + zy("狸","ㄌㄧˊ") },
-      { id: 81, word: "box", zh: zy("箱","ㄒㄧㄤ") + zy("子","ㄗ˙") },
-      { id: 82, word: "mop", zh: zy("拖","ㄊㄨㄛ") + zy("把","ㄅㄚˇ") },
-      { id: 83, word: "log", zh: zy("木","ㄇㄨˋ") + zy("塊","ㄎㄨㄞˋ") },
-      { id: 84, word: "dog", zh: zy("狗","ㄍㄡˇ") },
-      { id: 85, word: "hug", zh: zy("擁","ㄩㄥˇ") + zy("抱","ㄅㄠˋ") },
-      { id: 86, word: "bug", zh: zy("昆","ㄎㄨㄣ") + zy("蟲","ㄔㄨㄥˊ") },
-      { id: 87, word: "sun", zh: zy("太","ㄊㄞˋ") + zy("陽","ㄧㄤˊ") },
-      { id: 88, word: "run", zh: zy("跑","ㄆㄠˇ") },
-      { id: 89, word: "mud", zh: zy("泥","ㄋㄧˊ") + zy("巴","ㄅㄚ") },
-      { id: 90, word: "bud", zh: zy("花","ㄏㄨㄚ") + zy("苞","ㄅㄠ") },
-      { id: 91, word: "cup", zh: zy("杯","ㄅㄟ") + zy("子","ㄗ˙") },
-      { id: 92, word: "hut", zh: zy("小","ㄒㄧㄠˇ") + zy("屋","ㄨ") },
-      { id: 93, word: "country", zh: zy("國","ㄍㄨㄛˊ") + zy("家","ㄐㄧㄚ") },
-      { id: 94, word: "symbol", zh: zy("象","ㄒㄧㄤˋ") + zy("徵","ㄓㄥ") },
-      { id: 95, word: "then", zh: zy("然","ㄖㄢˊ") + zy("後","ㄏㄡˋ") },
-      { id: 96, word: "sister", zh: zy("姊","ㄐㄧㄝˇ") + zy("妹","ㄇㄟˋ") },
-      { id: 97, word: "brother", zh: zy("兄","ㄒㄧㄨㄥ") + zy("弟","ㄉㄧˋ") },
-      { id: 98, word: "leaf", zh: zy("葉","ㄧㄝˋ") + zy("子","ㄗ˙") },
-      { id: 99, word: "pull", zh: zy("拉","ㄌㄚ") },
-      { id: 100, word: "push", zh: zy("推","ㄊㄨㄟ") }
-    ];
-
-    // 音效模組 (Web Audio API)
-    const SFX = {
-      ctx: null,
-      init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-      play(freq, type, duration) {
-        this.init();
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        g.gain.setValueAtTime(0.12, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-        osc.connect(g);
-        g.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + duration);
-      },
-      attackHit() {
-        this.play(280, 'square', 0.1);
-        setTimeout(() => this.play(140, 'sawtooth', 0.2), 70);
-      },
-      thunderHit() {
-        this.play(110, 'sawtooth', 0.35);
-        setTimeout(() => this.play(70, 'sawtooth', 0.45), 120);
-      },
-      playerDamage() {
-        this.play(190, 'sawtooth', 0.15);
-        setTimeout(() => this.play(95, 'triangle', 0.25), 100);
-      }
-    };
-
-    // 遊戲狀態變數
-    let selectedStarterKey = 'pikachu';
-    let currentMode = 'normal';
-    let activeWordList = [];
-    let currentWordIndex = 0;
-    let playerHp = 100;
-    let enemyHp = 100;
-
-    function selectStarter(key, el) {
-      selectedStarterKey = key;
-      document.querySelectorAll('.starter-card').forEach(c => c.classList.remove('selected'));
-      el.classList.add('selected');
-    }
-
-    function startGame() {
-      const startNum = parseInt(document.getElementById('range-start').value) || 1;
-      const endNum = parseInt(document.getElementById('range-end').value) || 25;
-      
-      const minId = Math.max(1, Math.min(startNum, endNum));
-      const maxId = Math.min(100, Math.max(startNum, endNum));
-
-      activeWordList = WORD_DATABASE.filter(w => w.id >= minId && w.id <= maxId);
-      if (activeWordList.length === 0) activeWordList = WORD_DATABASE.slice(0, 10);
-      activeWordList.sort(() => Math.random() - 0.5);
-
-      document.getElementById('start-screen').style.display = 'none';
-      document.getElementById('poke-center-screen').style.display = 'none';
-
-      // 玩家官方設定與圖片載入
-      const conf = POKEMON_CONFIG[selectedStarterKey];
-      document.getElementById('player-hud-name').innerHTML = conf.nameHtml;
-      document.getElementById('move-name-normal').innerHTML = conf.normalMove;
-      document.getElementById('move-name-special').innerHTML = conf.specialMove;
-      document.getElementById('move-name-evo').innerHTML = conf.evoMove;
-      document.getElementById('player-img').src = getOfficialArtUrl(conf.dexId);
-
-      playerHp = 100;
-      updatePlayerHpUI();
-
-      spawnNewEnemy();
-      currentWordIndex = 0;
-      renderCurrentQuestion();
-    }
-
-    function returnToStart() {
-      document.getElementById('poke-center-screen').style.display = 'none';
-      document.getElementById('start-screen').style.display = 'flex';
-    }
-
-    function spawnNewEnemy() {
-      enemyHp = 100;
-      updateEnemyHpUI();
-      const wild = WILD_ENEMIES[Math.floor(Math.random() * WILD_ENEMIES.length)];
-      document.getElementById('enemy-hud-name').innerHTML = wild.name;
-      document.getElementById('enemy-img').src = getOfficialArtUrl(wild.dexId);
-    }
-
-    function changeMode(mode) {
-      currentMode = mode;
-      document.querySelectorAll('.move-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(`btn-mode-${mode}`).classList.add('active');
-
-      document.getElementById('quiz-choices').style.display = (mode === 'evo') ? 'none' : 'grid';
-      document.getElementById('spell-panel').style.display = (mode === 'evo') ? 'block' : 'none';
-
-      renderCurrentQuestion();
-    }
-
-    function speakCurrentWord() {
-      const item = activeWordList[currentWordIndex];
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(item.word);
-        utter.lang = 'en-US';
-        utter.rate = 0.82;
-        window.speechSynthesis.speak(utter);
-      }
-    }
-
-    function renderCurrentQuestion() {
-      const item = activeWordList[currentWordIndex];
-      const feedback = document.getElementById('battle-message');
-      feedback.innerHTML = '';
-      feedback.className = 'battle-msg';
-
-      document.getElementById('q-category').innerHTML = `${zy("第","ㄉㄧˋ")} ${item.id} ${zy("號","ㄏㄠˋ")}`;
-      const imgBox = document.getElementById('q-image-box');
-      const prompt = document.getElementById('q-prompt');
-      const voiceBtn = document.getElementById('q-voice-btn');
-
-      if (currentMode === 'normal') {
-        // 一般攻擊：聽音選真實圖標
-        imgBox.style.display = 'none';
-        prompt.innerHTML = `🎧 ${zy("請","ㄑㄧㄥˇ")}${zy("聽","ㄊㄧㄥ")}${zy("發","ㄈㄚ")}${zy("音","ㄧㄣ")}${zy("選","ㄒㄩㄢˇ")}${zy("圖","ㄊㄨˊ")}`;
-        voiceBtn.style.display = 'inline-flex';
-        speakCurrentWord();
-        renderChoices(item, 'image');
-      } 
-      else if (currentMode === 'special') {
-        // 特殊攻擊：看真實物品圖標選英文單字
-        imgBox.style.display = 'flex';
-        imgBox.innerHTML = getItemIconImg(item.id);
-        prompt.innerHTML = item.zh;
-        voiceBtn.style.display = 'none';
-        renderChoices(item, 'word');
-      } 
-      else if (currentMode === 'evo') {
-        // 進化攻擊：看真實物品圖標輸入單字
-        imgBox.style.display = 'flex';
-        imgBox.innerHTML = getItemIconImg(item.id);
-        prompt.innerHTML = item.zh;
-        voiceBtn.style.display = 'inline-flex';
-        document.getElementById('spell-input').value = '';
-        document.getElementById('spell-input').focus();
-      }
-    }
-
-    function renderChoices(currentItem, displayType) {
-      const container = document.getElementById('quiz-choices');
-      container.innerHTML = '';
-
-      let pool = activeWordList.filter(w => w.id !== currentItem.id).sort(() => Math.random() - 0.5).slice(0, 3);
-      let options = [...pool, currentItem].sort(() => Math.random() - 0.5);
-
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        if (displayType === 'image') {
-          // 聽音選圖：呈現具體清晰的物體真實圖標
-          btn.innerHTML = `<div class="choice-icon-wrap">${getItemIconImg(opt.id)}</div>`;
-        } else {
-          btn.textContent = opt.word;
-        }
-        btn.onclick = () => onAnswer(btn, opt.id === currentItem.id);
-        container.appendChild(btn);
-      });
-    }
-
-    function onAnswer(btn, isCorrect) {
-      document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
-      const item = activeWordList[currentWordIndex];
-
-      if (isCorrect) {
-        if (btn) btn.classList.add('correct');
-        handleSuccessAttack();
-      } else {
-        if (btn) btn.classList.add('wrong');
-        handlePlayerHurt(item.word);
-      }
-    }
-
-    function checkSpelling() {
-      const input = document.getElementById('spell-input').value.trim().toLowerCase();
-      const currentWord = activeWordList[currentWordIndex].word.toLowerCase();
-
-      if (input === currentWord) {
-        handleSuccessAttack();
-      } else {
-        handlePlayerHurt(currentWord);
-      }
-    }
-
-    document.getElementById('spell-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') checkSpelling();
-    });
-
-    // 成功命中：播放真實立繪進化與扣血
-    function handleSuccessAttack() {
-      const conf = POKEMON_CONFIG[selectedStarterKey];
-      const playerSprite = document.getElementById('player-sprite-box');
-      const playerImg = document.getElementById('player-img');
-      const enemySprite = document.getElementById('enemy-sprite-box');
-      const feedback = document.getElementById('battle-message');
-
-      let damage = 20; // 預設 1/5
-      let moveText = conf.normalMove;
-
-      if (currentMode === 'normal') {
-        damage = 20; // 扣 1/5 (20%)
-        moveText = conf.normalMove;
-        playerSprite.classList.add('attack-forward');
-        SFX.attackHit();
-      } else if (currentMode === 'special') {
-        damage = 25; // 扣 1/4 (25%)
-        moveText = conf.specialMove;
-        playerSprite.classList.add('attack-forward');
-        SFX.attackHit();
-      } else if (currentMode === 'evo') {
-        damage = 50; // 扣 1/2 (50%)
-        moveText = conf.evoMove;
-        // 進化成真實立繪型態（雷丘 / 仙子伊布 / 噴火龍）
-        playerImg.src = getOfficialArtUrl(conf.evoDexId);
-        playerSprite.classList.add('attack-forward');
-        SFX.thunderHit();
-      }
-
-      feedback.innerHTML = `💥 ${conf.nameHtml} ${zy("使","ㄕˇ")}${zy("出","ㄔㄨ")} ${moveText}！${zy("命","ㄇㄧㄥˋ")}${zy("中","ㄓㄨㄥ")}！`;
-      feedback.className = 'battle-msg win';
-
-      setTimeout(() => {
-        enemySprite.classList.add('got-hit');
-        enemyHp = Math.max(0, enemyHp - damage);
-        updateEnemyHpUI();
-      }, 300);
-
-      setTimeout(() => {
-        // 如果是進化模式，攻擊後退回初始型態真實立繪
-        if (currentMode === 'evo') {
-          playerImg.src = getOfficialArtUrl(conf.dexId);
-        }
-        playerSprite.classList.remove('attack-forward');
-        enemySprite.classList.remove('got-hit');
-
-        if (enemyHp <= 0) {
-          enemySprite.classList.add('faint-away');
-          setTimeout(() => {
-            enemySprite.classList.remove('faint-away');
-            spawnNewEnemy();
-            advanceNextWord();
-          }, 800);
-        } else {
-          advanceNextWord();
-        }
-      }, 1100);
-    }
-
-    // 答錯受到野生寶可夢攻擊：扣除 1/3 (33.34%) 血量
-    function handlePlayerHurt(correctAnswer) {
-      const enemySprite = document.getElementById('enemy-sprite-box');
-      const playerSprite = document.getElementById('player-sprite-box');
-      const feedback = document.getElementById('battle-message');
-
-      enemySprite.classList.add('enemy-attack-forward');
-      SFX.playerDamage();
-
-      feedback.innerHTML = `❌ ${zy("答","ㄉㄚˊ")}${zy("錯","ㄘㄨㄛˋ")}${zy("了","˙ㄌㄜ")}！${zy("正","ㄓㄥˋ")}${zy("確","ㄑㄩㄝˋ")}：${correctAnswer}`;
-      feedback.className = 'battle-msg lose';
-
-      setTimeout(() => {
-        playerSprite.classList.add('got-hit');
-        playerHp = Math.max(0, playerHp - 33.34);
-        updatePlayerHpUI();
-      }, 300);
-
-      setTimeout(() => {
-        enemySprite.classList.remove('enemy-attack-forward');
-        playerSprite.classList.remove('got-hit');
-
-        if (playerHp <= 1) { // 累計 3 次失誤
-          playerSprite.classList.add('faint-away');
-          setTimeout(() => {
-            playerSprite.classList.remove('faint-away');
-            // 回到寶可夢中心
             document.getElementById('poke-center-screen').style.display = 'flex';
           }, 800);
         } else {
