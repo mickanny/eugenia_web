@@ -3,38 +3,455 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>寶可夢英文單字大對決</title>
+  <title>英文字詞練習大冒險</title>
   <style>
     :root {
-      --primary: #e63946;
-      --secondary: #457b9d;
-      --bg: #1d3557;
-      --card-bg: #ffffff;
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --success: #2ec4b6;
+      --danger: #e71d36;
+      --bg: #f8f9fa;
+      --card: #ffffff;
       --text: #2b2d42;
-      --hp-green: #2ec4b6;
-      --hp-danger: #e71d36;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; font-family: 'BiauKai', 'DFKai-SB', 'PingFang TC', system-ui, sans-serif; }
     body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      font-family: 'BiauKai', 'DFKai-SB', 'PingFang TC', sans-serif;
+      margin: 0;
+      background: var(--bg);
       color: var(--text);
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 12px;
+      padding: 20px;
     }
-
-    /* 台灣課本標準：國字在左、注音直排在右側樣式 */
-    .zy-block {
+    .container {
+      width: 100%;
+      max-width: 620px;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    h1 { margin-top: 0; color: var(--primary); font-size: 1.8rem; line-height: 1.6; }
+    ruby { ruby-position: over; }
+    rt { font-size: 0.55em; color: #4a5568; font-weight: normal; }
+    
+    .nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: 0.2s;
+      line-height: 1.5;
+    }
+    button:hover { background: var(--secondary); transform: translateY(-1px); }
+    button.outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    button.outline.active {
+      background: var(--primary);
+      color: white;
+    }
+    button.outline.active rt { color: #f1f5f9; }
+    
+    .score-board {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      color: #6c757d;
+      margin-bottom: 16px;
+      padding: 0 8px;
+      font-size: 1.1rem;
+    }
+    .card {
+      background: #f1f5f9;
+      border-radius: 14px;
+      padding: 26px 16px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .word-prompt {
+      font-size: 2.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #1e293b;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .category-tag {
+      display: inline-block;
+      padding: 4px 14px;
+      background: #e2e8f0;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: #475569;
+    }
+    .speaker-btn {
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 1.5rem;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      vertical-align: middle;
-      margin: 0 1px;
-      line-height: 1;
+      margin-top: 8px;
     }
+    .speaker-btn:hover { background: #cbd5e1; }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .option-btn {
+      background: white;
+      color: var(--text);
+      border: 2px solid #e2e8f0;
+      padding: 14px 8px;
+      font-size: 1.25rem;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 64px;
+    }
+    .option-btn:hover { border-color: var(--primary); background: #f8faff; }
+    .option-btn.correct { background: var(--success); color: white; border-color: var(--success); }
+    .option-btn.correct rt { color: #f1f5f9; }
+    .option-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+    .option-btn.wrong rt { color: #f1f5f9; }
+
+    .spell-input {
+      font-size: 1.4rem;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 2px solid #cbd5e1;
+      width: 80%;
+      max-width: 320px;
+      text-align: center;
+      margin-bottom: 16px;
+      text-transform: lowercase;
+    }
+    .feedback {
+      min-height: 36px;
+      font-weight: bold;
+      margin-top: 14px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .feedback.correct { color: var(--success); }
+    .feedback.wrong { color: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎒 <ruby>英<rt>ㄧㄥ</rt>語<rt>ㄩˇ</rt></ruby><ruby>單<rt>ㄉㄢ</rt>字<rt>ㄗˋ</rt></ruby><ruby>大<rt>ㄉㄚˋ</rt>冒<rt>ㄇㄠˋ</rt>險<rt>ㄒㄧㄢˇ</rt></ruby></h1>
+
+    <div class="nav">
+      <button class="outline active" id="btn-quiz" onclick="switchMode('quiz')">
+        <ruby>選<rt>ㄒㄩㄢˇ</rt>擇<rt>ㄗㄜˊ</rt>題<rt>ㄊㄧˊ</rt></ruby>
+      </button>
+      <button class="outline" id="btn-spell" onclick="switchMode('spell')">
+        <ruby>拼<rt>ㄆㄧㄣ</rt>字<rt>ㄗˋ</rt>挑<rt>ㄊㄧㄠˇ</rt>戰<rt>ㄓㄢˋ</rt></ruby>
+      </button>
+      <button class="outline" id="btn-listen" onclick="switchMode('listen')">
+        <ruby>聽<rt>ㄊㄧㄥ</rt>音<rt>ㄧㄣ</rt>猜<rt>ㄘㄞ</rt>字<rt>ㄗˋ</rt></ruby>
+      </button>
+    </div>
+
+    <div class="score-board">
+      <span id="progress-text"><ruby>題<rt>ㄊㄧˊ</rt>號<rt>ㄏㄠˋ</rt></ruby>: 1 / 19</span>
+      <span id="score-text"><ruby>得<rt>ㄉㄜˊ</rt>分<rt>ㄈㄣ</rt></ruby>: 0</span>
+    </div>
+
+    <div class="card">
+      <div id="category" class="category-tag"></div>
+      <div id="prompt" class="word-prompt"></div>
+      <button id="voice-btn" class="speaker-btn" onclick="speakCurrentWord()">🔊</button>
+    </div>
+
+    <!-- 選擇題區塊 -->
+    <div id="quiz-area" class="options-grid"></div>
+
+    <!-- 拼字挑戰區塊 -->
+    <div id="spell-area" style="display: none;">
+      <input type="text" id="spell-input" class="spell-input" placeholder="請輸入英文單字..." autocomplete="off" />
+      <br>
+      <button onclick="checkSpelling()">
+        <ruby>送<rt>ㄙㄨㄥˋ</rt>出<rt>ㄔㄨ</rt>答<rt>ㄉㄚˊ</rt>案<rt>ㄢˋ</rt></ruby>
+      </button>
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+  </div>
+
+  <script>
+    // 包含注音標籤的單字資料庫
+    const wordList = [
+      // 第一頁：文具類
+      { 
+        word: "pen", 
+        zhRuby: "<ruby>原<rt>ㄩㄢˊ</rt>子<rt>ㄗˇ</rt>筆<rt>ㄅㄧˇ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "pencil", 
+        zhRuby: "<ruby>鉛<rt>ㄑㄧㄢ</rt>筆<rt>ㄅㄧˇ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "book", 
+        zhRuby: "<ruby>書<rt>ㄕㄨ</rt>本<rt>ㄅㄣˇ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "notebook", 
+        zhRuby: "<ruby>筆<rt>ㄅㄧˇ</rt>記<rt>ㄐㄧˋ</rt>本<rt>ㄅㄣˇ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "eraser", 
+        zhRuby: "<ruby>橡<rt>ㄒㄧㄤˋ</rt>皮<rt>ㄆㄧˊ</rt>擦<rt>ㄘㄚ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "ruler", 
+        zhRuby: "<ruby>尺<rt>ㄔˇ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "folder", 
+        zhRuby: "<ruby>資<rt>ㄗ</rt>料<rt>ㄌㄧㄠˋ</rt>夾<rt>ㄐㄧㄚˊ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+      { 
+        word: "backpack", 
+        zhRuby: "<ruby>後<rt>ㄏㄡˋ</rt>背<rt>ㄅㄟ</rt>包<rt>ㄅㄠ</rt></ruby>", 
+        catRuby: "<ruby>文<rt>ㄨㄣˊ</rt>具<rt>ㄐㄩˋ</rt></ruby>" 
+      },
+
+      // 第二頁：教室用品類
+      { 
+        word: "board", 
+        zhRuby: "<ruby>白<rt>ㄅㄞˊ</rt>板<rt>ㄅㄢˇ</rt></ruby>", 
+        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
+      },
+      { 
+        word: "marker", 
+        zhRuby: "<ruby>白<rt>ㄅㄞˊ</rt>板<rt>ㄅㄢˇ</rt>筆<rt>ㄅㄧˇ</rt></ruby>", 
+        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
+      },
+      { 
+        word: "computer", 
+        zhRuby: "<ruby>電<rt>ㄉㄧㄢˋ</rt>腦<rt>ㄋㄠˇ</rt></ruby>", 
+        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
+      },
+      { 
+        word: "globe", 
+        zhRuby: "<ruby>地<rt>ㄉㄧˋ</rt>球<rt>ㄑㄧㄡˊ</rt>儀<rt>ㄧˊ</rt></ruby>", 
+        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
+      },
+      { 
+        word: "desk", 
+        zhRuby: "<ruby>書<rt>ㄕㄨ</rt>桌<rt>ㄓㄨㄛ</rt></ruby>", 
+        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
+      },
+      { 
+        word: "chair", 
+        zhRuby: "<ruby>椅<rt>ㄧˇ</rt>子<rt>ㄗ˙</rt></ruby>", 
+        catRuby: "<ruby>教<rt>ㄐㄧㄠˋ</rt>室<rt>ㄕˋ</rt>用<rt>ㄩㄥˋ</rt>品<rt>ㄆㄧㄣˇ</rt></ruby>" 
+      },
+
+      // 第三頁：形狀類
+      { 
+        word: "circle", 
+        zhRuby: "<ruby>圓<rt>ㄩㄢˊ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
+        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
+      },
+      { 
+        word: "triangle", 
+        zhRuby: "<ruby>三<rt>ㄙㄢ</rt>角<rt>ㄐㄧㄠˇ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
+        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
+      },
+      { 
+        word: "rectangle", 
+        zhRuby: "<ruby>長<rt>ㄔㄤˊ</rt>方<rt>ㄈㄤ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
+        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
+      },
+      { 
+        word: "square", 
+        zhRuby: "<ruby>正<rt>ㄓㄥˋ</rt>方<rt>ㄈㄤ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
+        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
+      },
+      { 
+        word: "oval", 
+        zhRuby: "<ruby>橢<rt>ㄊㄨㄛˇ</rt>圓<rt>ㄩㄢˊ</rt>形<rt>ㄒㄧㄥˊ</rt></ruby>", 
+        catRuby: "<ruby>形<rt>ㄒㄧㄥˊ</rt>狀<rt>ㄓㄨㄤˋ</rt></ruby>" 
+      }
+    ];
+
+    let currentMode = 'quiz';
+    let currentIndex = 0;
+    let score = 0;
+    let shuffledList = [];
+
+    function initGame() {
+      shuffledList = [...wordList].sort(() => Math.random() - 0.5);
+      currentIndex = 0;
+      score = 0;
+      updateUI();
+      renderQuestion();
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`btn-${mode}`).classList.add('active');
+      
+      document.getElementById('quiz-area').style.display = (mode === 'quiz' || mode === 'listen') ? 'grid' : 'none';
+      document.getElementById('spell-area').style.display = mode === 'spell' ? 'block' : 'none';
+      
+      initGame();
+    }
+
+    function speakCurrentWord() {
+      const item = shuffledList[currentIndex];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(item.word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.8;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function renderQuestion() {
+      const item = shuffledList[currentIndex];
+      const feedback = document.getElementById('feedback');
+      feedback.innerHTML = '';
+      feedback.className = 'feedback';
+      
+      document.getElementById('category').innerHTML = item.catRuby;
+      updateUI();
+
+      if (currentMode === 'quiz') {
+        document.getElementById('prompt').innerHTML = item.zhRuby;
+        document.getElementById('voice-btn').style.display = 'none';
+        renderOptions(item.word, 'word');
+      } else if (currentMode === 'spell') {
+        document.getElementById('prompt').innerHTML = item.zhRuby;
+        document.getElementById('voice-btn').style.display = 'inline-flex';
+        document.getElementById('spell-input').value = '';
+        document.getElementById('spell-input').focus();
+      } else if (currentMode === 'listen') {
+        document.getElementById('prompt').innerHTML = '🎧 <ruby>請<rt>ㄑㄧㄥˇ</rt>聽<rt>ㄊㄧㄥ</rt>發<rt>ㄈㄚ</rt>音<rt>ㄧㄣ</rt></ruby>';
+        document.getElementById('voice-btn').style.display = 'inline-flex';
+        speakCurrentWord();
+        renderOptions(item.zhRuby, 'zhRuby');
+      }
+    }
+
+    function renderOptions(correctAnswer, field) {
+      const quizArea = document.getElementById('quiz-area');
+      quizArea.innerHTML = '';
+
+      let pool = wordList.map(w => w[field]).filter(val => val !== correctAnswer);
+      let options = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+      options.push(correctAnswer);
+      options.sort(() => Math.random() - 0.5);
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = opt;
+        btn.onclick = () => selectOption(btn, opt === correctAnswer);
+        quizArea.appendChild(btn);
+      });
+    }
+
+    function selectOption(btn, isCorrect) {
+      const allBtns = document.querySelectorAll('.option-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      const feedback = document.getElementById('feedback');
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.innerHTML = '🎉 <ruby>答<rt>ㄉㄚˊ</rt>對<rt>ㄉㄨㄟˋ</rt>了<rt>˙ㄌㄜ</rt></ruby>！<ruby>太<rt>ㄊㄞˋ</rt>棒<rt>ㄅㄤˋ</rt>了<rt>˙ㄌㄜ</rt></ruby>！';
+        feedback.className = 'feedback correct';
+        score += 10;
+        speakCurrentWord();
+      } else {
+        btn.classList.add('wrong');
+        feedback.innerHTML = `❌ <ruby>答<rt>ㄉㄚˊ</rt>錯<rt>ㄘㄨㄛˋ</rt>了<rt>˙ㄌㄜ</rt></ruby>！${shuffledList[currentIndex].word}`;
+        feedback.className = 'feedback wrong';
+      }
+      setTimeout(nextQuestion, 1400);
+    }
+
+    function checkSpelling() {
+      const input = document.getElementById('spell-input').value.trim().toLowerCase();
+      const currentWord = shuffledList[currentIndex].word.toLowerCase();
+      const feedback = document.getElementById('feedback');
+
+      if (input === currentWord) {
+        feedback.innerHTML = '🎉 <ruby>拼<rt>ㄆㄧㄣ</rt>寫<rt>ㄒㄧㄝˇ</rt>完<rt>ㄨㄢˊ</rt>全<rt>ㄑㄩㄢˊ</rt>正<rt>ㄓㄥˋ</rt>確<rt>ㄑㄩㄝˋ</rt></ruby>！';
+        feedback.className = 'feedback correct';
+        score += 10;
+        speakCurrentWord();
+      } else {
+        feedback.innerHTML = `❌ <ruby>拼<rt>ㄆㄧㄣ</rt>錯<rt>ㄘㄨㄛˋ</rt>囉<rt>˙ㄌㄜ</rt></ruby>，<ruby>正<rt>ㄓㄥˋ</rt>確<rt>ㄑㄩㄝˋ</rt>是<rt>ㄕˋ</rt></ruby>：${currentWord}`;
+        feedback.className = 'feedback wrong';
+      }
+      setTimeout(nextQuestion, 1400);
+    }
+
+    document.getElementById('spell-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') checkSpelling();
+    });
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= shuffledList.length) {
+        alert(`練習完成！恭喜獲得 ${score} 分！`);
+        initGame();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function updateUI() {
+      document.getElementById('progress-text').innerHTML = `<ruby>題<rt>ㄊㄧˊ</rt>號<rt>ㄏㄠˋ</rt></ruby>: ${currentIndex + 1} / ${shuffledList.length}`;
+      document.getElementById('score-text').innerHTML = `<ruby>得<rt>ㄉㄜˊ</rt>分<rt>ㄈㄣ</rt></ruby>: ${score}`;
+    }
+
+    // 啟動遊戲
+    initGame();
+  </script>
+</body>
+</html>    }
     .zy-char { font-size: 1.15em; line-height: 1; display: inline-block; }
     .zy-tone {
       writing-mode: vertical-rl;
