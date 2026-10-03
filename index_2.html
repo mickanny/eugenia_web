@@ -30,13 +30,13 @@
       padding: 12px;
     }
 
-    /* ================= 台灣教育部國小標準直排注音規格 ================= */
+    /* ================= 台灣教育部國小標準直排注音規格（聲符加大居中與防吃色優化） ================= */
     .zy-unit {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       vertical-align: middle;
-      margin: 0 1px;
+      margin: 0 1.5px;
       line-height: 1;
     }
     .zy-char {
@@ -46,35 +46,57 @@
     }
     .zy-side {
       display: inline-flex;
-      align-items: center;
-      font-size: 0.46em;
+      align-items: center; /* 注音本體與聲符欄垂直置中 */
+      font-size: 0.54em;
       margin-left: 2px;
       user-select: none;
       line-height: 1;
     }
+    /* 注音符號直排欄 */
     .zy-body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       letter-spacing: -1px;
-      color: #555;
+      color: #2b2d42;
       font-family: 'BiauKai', 'DFKai-SB', sans-serif;
+      font-weight: bold;
     }
+    /* 輕聲（置於頂部中央） */
     .zy-body .light-tone {
-      font-size: 0.9em;
-      line-height: 0.6;
-      margin-bottom: 1px;
+      font-size: 1.45em;
+      font-weight: 900;
+      line-height: 0.55;
+      margin-bottom: 2px;
     }
+    /* 聲調欄（二、三、四聲加大並居中、微調下移對齊） */
     .zy-tone-col {
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      align-items: flex-start;
-      margin-left: 1px;
-      font-size: 0.85em;
-      color: #555;
+      justify-content: center; /* 垂直居中 */
+      align-items: center;
+      margin-left: 1.5px;
+      font-size: 1.55em; /* 聲符再加大 */
+      font-weight: 900;
+      color: #1a1a1a;
+      line-height: 1;
+      transform: translateY(1.5px); /* 往下一點精準垂直置中 */
       font-family: 'BiauKai', 'DFKai-SB', sans-serif;
+    }
+
+    /* 圖卡內部專用注音增強樣式：防止色卡背景（如淺黃、淺綠、高飽和紅）吃色看不清 */
+    .card-zy-label .zy-char,
+    .card-zy-label-large .zy-char {
+      color: #ffffff;
+      text-shadow: 0 0 3px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .card-zy-label .zy-body,
+    .card-zy-label-large .zy-body,
+    .card-zy-label .zy-tone-col,
+    .card-zy-label-large .zy-tone-col {
+      color: #ffffff;
+      text-shadow: 0 0 3px rgba(0,0,0,0.9), 0 1px 2px #000;
     }
 
     .container {
@@ -370,6 +392,11 @@
       border-radius: 18px;
       padding: 14px;
       margin-bottom: 14px;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .q-banner {
       display: inline-block;
@@ -378,28 +405,28 @@
       padding: 2px 14px;
       border-radius: 10px;
       font-size: 0.85rem;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .q-main {
       font-size: 1.6rem;
       font-weight: bold;
-      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
     }
+    /* 題目圖卡容器（放大至 150px） */
     .q-item-icon-box {
-      width: 90px;
-      height: 90px;
-      margin: 4px auto;
+      width: 150px;
+      height: 150px;
+      margin: 6px auto;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .item-card-wrap {
-      width: 86px;
-      height: 86px;
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -444,12 +471,12 @@
     .choice-btn.wrong { background: #ffe3e3 !important; border-color: #e71d36 !important; }
 
     .choice-icon-wrap {
-      width: 72px;
-      height: 72px;
+      width: 76px;
+      height: 76px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .spell-wrap { margin: 10px 0; }
@@ -493,53 +520,68 @@
     .word-card-box {
       width: 100%;
       height: 100%;
-      border-radius: 16px;
+      border-radius: 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-      border: 2px solid rgba(255,255,255,0.4);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      border: 2.5px solid rgba(255,255,255,0.45);
     }
     .card-id-tag {
       position: absolute;
-      top: 4px;
-      left: 6px;
-      background: rgba(0,0,0,0.22);
+      top: 6px;
+      left: 8px;
+      background: rgba(0,0,0,0.35);
       color: #fff;
-      font-size: 0.65rem;
-      padding: 1px 6px;
+      font-size: 0.72rem;
+      padding: 2px 7px;
       border-radius: 6px;
       font-weight: bold;
     }
     .card-emoji-icon {
-      font-size: 2.1rem;
+      font-size: 2.2rem;
       line-height: 1;
-      margin-top: 2px;
-      margin-bottom: 3px;
+      margin-top: 3px;
+      margin-bottom: 4px;
     }
     .card-zy-label {
       color: #ffffff;
       font-size: 0.95rem;
       font-weight: bold;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .card-zy-label-large {
       color: #ffffff;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       font-weight: bold;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .svg-graphic {
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
+    }
+
+    /* 題目圖卡特大號樣式 */
+    .q-item-icon-box .card-emoji-icon {
+      font-size: 4rem;
+      margin-bottom: 8px;
+    }
+    .q-item-icon-box .svg-graphic {
+      width: 82px;
+      height: 82px;
+      margin-bottom: 4px;
+    }
+    .q-item-icon-box .card-zy-label {
+      font-size: 1.4rem;
+    }
+    .q-item-icon-box .card-zy-label-large {
+      font-size: 1.7rem;
     }
   </style>
 </head>
@@ -632,7 +674,7 @@
       </div>
     </div>
 
-    <!-- 4. 招式攻擊選單 -->
+    <!-- 4. 招式攻擊選單（第三種攻擊更名為「進化攻擊」） -->
     <div class="attack-menu">
       <button class="move-btn active" id="btn-mode-normal" onclick="changeMode('normal')">
         <span id="move-name-normal">一般攻擊</span>
@@ -652,7 +694,7 @@
     <div class="question-panel">
       <div class="q-banner" id="q-category">題目類別</div>
       <div class="q-item-icon-box" id="q-image-box" style="display: none;"></div>
-      <div class="q-main">
+      <div class="q-main" id="q-main-box">
         <span id="q-prompt"></span>
         <button id="q-voice-btn" class="speaker-btn" onclick="speakCurrentWord()">🔊</button>
       </div>
@@ -674,7 +716,7 @@
   </div>
 
   <script>
-    // ==================== 國小標準右側聲符注音引擎 ====================
+    // ==================== 國小標準右側聲符注音引擎（聲符加大與精準垂直置中） ====================
     function formatZhWithBopomofo(raw) {
       return raw.replace(/([一-龥])\(([^)]+)\)/g, (match, char, zyStr) => {
         let tone = '';
@@ -763,7 +805,6 @@
       { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)炎(ㄧㄢˊ)兔(ㄊㄨˋ)兒(ㄦˊ)"), dexId: 813 }
     ];
 
-    // 16 組優美漸層色
     const GRADIENTS = [
       "linear-gradient(135deg, #3b82f6, #1d4ed8)",
       "linear-gradient(135deg, #10b981, #047857)",
@@ -776,19 +817,18 @@
       "linear-gradient(135deg, #6366f1, #4338ca)"
     ];
 
-    // ==================== 1~100 生詞圖卡對應 (無英文，只呈現圖案與中文注音) ====================
     const EMOJI_ICON_MAP = {
       1: "🥫", 2: "🌊", 3: "🦇", 4: "🐱", 5: "🧢",
       7: "👨", 8: "✨", 10: "👀", 11: "🐥", 12: "🦋",
       13: "🐸", 24: "👂", 25: "👁️", 26: "🥫", 28: "🔴",
       29: "🩺", 30: "🥅", 31: "🧒", 32: "🍲", 33: "👥",
-      34: "✉️", 35: "🔍", 37: "😋", 38: "🍿", 40: "👨‍⚕️",
+      34: "✉", 35: "🔍", 37: "😋", 38: "🍿", 40: "👨‍⚕️️",
       41: "📦", 42: "🎡", 43: "🎒", 44: "⭕", 45: "🔺",
       46: "▭", 47: "⬛", 48: "👃", 49: "🧠", 50: "✋",
-      51: "🐘", 52: "⛏️️", 53: "🥣", 54: "🔨", 55: "🥊",
+      51: "🐘", 52: "⛏", 53: "🥣", 54: "🔨", 55: "🥊",
       56: "👕", 57: "🫗", 58: "🎉", 59: "🎭", 61: "🟢",
       62: "💌", 63: "🐉", 64: "🎈", 65: "⚪", 66: "🔵",
-      67: "🏘️", 68: "🥚", 69: "👨", 70: "👩", 71: "👴",
+      67: "🏘️️", 68: "🥚", 69: "👨", 70: "👩", 71: "👴",
       72: "👵", 73: "👅", 74: "🌱", 75: "🌸", 76: "🪓",
       77: "🧷", 78: "🔥", 79: "🍲", 80: "🦊", 81: "📦",
       82: "🧹", 83: "🪵", 84: "🐶", 85: "🫂", 86: "🐛",
@@ -802,7 +842,6 @@
       const zhHtml = item.zh;
       const bg = GRADIENTS[id % GRADIENTS.length];
 
-      // 1. 書本 (20: book)
       if (id === 20) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #f87171, #dc2626);">
           <span class="card-id-tag">#${id}</span>
@@ -816,7 +855,6 @@
         </div>`;
       }
 
-      // 2. 大腿部 (6: lap)
       if (id === 6) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #34d399, #059669);">
           <span class="card-id-tag">#${id}</span>
@@ -829,7 +867,6 @@
         </div>`;
       }
 
-      // 3. 筆 (18: pen)
       if (id === 18) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
           <span class="card-id-tag">#${id}</span>
@@ -843,7 +880,6 @@
         </div>`;
       }
 
-      // 4. 鉛筆 (19: pencil)
       if (id === 19) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #fbbf24, #d97706);">
           <span class="card-id-tag">#${id}</span>
@@ -857,7 +893,6 @@
         </div>`;
       }
 
-      // 5. 橡皮擦 (21: eraser)
       if (id === 21) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #f472b6, #db2777);">
           <span class="card-id-tag">#${id}</span>
@@ -874,7 +909,6 @@
         </div>`;
       }
 
-      // 6. 三 (15: three)
       if (id === 15) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #facc15, #ca8a04);">
           <span class="card-id-tag">#${id}</span>
@@ -888,7 +922,6 @@
         </div>`;
       }
 
-      // 7. 身體 (23: body)
       if (id === 23) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #818cf8, #4f46e5);">
           <span class="card-id-tag">#${id}</span>
@@ -904,7 +937,6 @@
         </div>`;
       }
 
-      // 8. 床 (27: bed)
       if (id === 27) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #c084fc, #9333ea);">
           <span class="card-id-tag">#${id}</span>
@@ -921,7 +953,6 @@
         </div>`;
       }
 
-      // 9. 尺 (22: ruler)
       if (id === 22) {
         return `<div class="word-card-box" style="background: linear-gradient(135deg, #fde047, #eab308);">
           <span class="card-id-tag">#${id}</span>
@@ -936,7 +967,6 @@
         </div>`;
       }
 
-      // 10. 若有對應合適 Emoji，顯示彩色 Emoji 圖卡與注音
       if (EMOJI_ICON_MAP[id]) {
         return `<div class="word-card-box" style="background: ${bg};">
           <span class="card-id-tag">#${id}</span>
@@ -945,7 +975,6 @@
         </div>`;
       }
 
-      // 11. 抽象詞（如 about 關於, like 像是, have 擁有）：以清晰放大的中文注音大字卡呈現
       return `<div class="word-card-box" style="background: ${bg};">
         <span class="card-id-tag">#${id}</span>
         <div class="card-zy-label-large">${zhHtml}</div>
@@ -1139,7 +1168,8 @@
       document.getElementById('player-hud-name').innerHTML = conf.nameHtml;
       document.getElementById('move-name-normal').innerHTML = conf.normalMove;
       document.getElementById('move-name-special').innerHTML = conf.specialMove;
-      document.getElementById('move-name-evo').innerHTML = conf.evoMove;
+      // 第三個按鈕名稱固定為「進化攻擊」
+      document.getElementById('move-name-evo').innerHTML = formatZhWithBopomofo("進(ㄐㄧㄣˋ)化(ㄏㄨㄚˋ)攻(ㄍㄨㄥ)擊(ㄐㄧˊ)");
       document.getElementById('player-img').src = getOfficialArtUrl(conf.dexId);
 
       playerHp = 100;
@@ -1195,25 +1225,30 @@
       const imgBox = document.getElementById('q-image-box');
       const prompt = document.getElementById('q-prompt');
       const voiceBtn = document.getElementById('q-voice-btn');
+      const qMainBox = document.getElementById('q-main-box');
 
       if (currentMode === 'normal') {
+        // 第一種：聽音選圖（顯示聽音提示與發音鈕，隱藏中央大圖）
         imgBox.style.display = 'none';
+        qMainBox.style.display = 'flex';
         prompt.innerHTML = `🎧 ${formatZhWithBopomofo("請(ㄑㄧㄥˇ)聽(ㄊㄧㄥ)發(ㄈㄚ)音(ㄧㄣ)選(ㄒㄩㄢˇ)圖(ㄊㄨˊ)")}`;
         voiceBtn.style.display = 'inline-flex';
         speakCurrentWord();
         renderChoices(item, 'image');
       } 
       else if (currentMode === 'special') {
+        // 第二種：特殊攻擊（圖卡上已有中文注音，故隱藏文字題目列，展示放大圖卡）
         imgBox.style.display = 'flex';
         imgBox.innerHTML = `<div class="item-card-wrap">${getItemCardHtml(item)}</div>`;
-        prompt.innerHTML = item.zh;
-        voiceBtn.style.display = 'none';
+        qMainBox.style.display = 'none'; // 隱藏原本文字題目
         renderChoices(item, 'word');
       } 
       else if (currentMode === 'evo') {
+        // 第三種：進化攻擊（圖卡上已有中文注音，隱藏文字題目列，展示放大圖卡與發音鈕）
         imgBox.style.display = 'flex';
         imgBox.innerHTML = `<div class="item-card-wrap">${getItemCardHtml(item)}</div>`;
-        prompt.innerHTML = item.zh;
+        qMainBox.style.display = 'flex';
+        prompt.innerHTML = ''; // 隱藏中文注音文字
         voiceBtn.style.display = 'inline-flex';
         document.getElementById('spell-input').value = '';
         document.getElementById('spell-input').focus();
@@ -1231,10 +1266,8 @@
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
         if (displayType === 'image') {
-          // 聽音選圖：展示「無英文」的圖卡
           btn.innerHTML = `<div class="choice-icon-wrap">${getItemCardHtml(opt)}</div>`;
         } else {
-          // 看圖選字：選項展示英文單字
           btn.textContent = opt.word;
         }
         btn.onclick = () => onAnswer(btn, opt.id === currentItem.id);
