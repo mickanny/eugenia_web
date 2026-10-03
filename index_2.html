@@ -2,8 +2,7 @@
 ```* **17 about (關於)**：抽象詞不使用不貼切的符號，直接以清晰、有設計質感的 **英文字卡** 呈現。
 ```* **15 three (三)**：修正破圖與排版，改為清晰明確的數字「**3**」字卡（3 顆星星）。
 ```* **23 body (身體)**：原本的心臟圖示已修正為清楚的人體軀幹與四肢線條的「**全身/身體**」向量圖。
-```* **27 bed (床)**：修正破圖問題，改為完整的雙人木質「**床鋪與枕頭被子**」向量圖。
-```html -->
+```* **27 bed (床)**：修正破圖問題，改為完整的雙人木質「**床鋪與枕頭被子**」向量圖。-->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -217,7 +216,7 @@
     .idle-bounce { animation: idle 2.5s infinite ease-in-out; }
     @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 
-    /* ====== 招式動作動畫 ====== */
+    /* 招式動畫 */
     .anim-iron-tail { animation: iron-tail 0.8s ease; }
     @keyframes iron-tail {
       0% { transform: translateX(0) rotate(0deg); }
@@ -295,7 +294,6 @@
     .faint-away { animation: faint 0.7s forwards ease; }
     @keyframes faint { 100% { transform: translateY(40px) scale(0.2); opacity: 0; } }
 
-    /* 全局招式光效層 */
     .fx-thunder-sky {
       background: rgba(255, 255, 255, 0.85);
       animation: thunder-sky-flash 0.3s 4 ease-in-out;
@@ -314,7 +312,6 @@
     }
     @keyframes moon-bg-flash { 0% { opacity: 0; } 30%, 80% { opacity: 0.9; } 100% { opacity: 0; } }
 
-    /* 招式選單 */
     .attack-menu {
       display: flex;
       gap: 8px;
@@ -340,7 +337,6 @@
     }
     .move-btn small { display: block; font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
 
-    /* 題目區塊 */
     .question-panel {
       background: #f8f9fa;
       border: 2px solid #e9ecef;
@@ -395,7 +391,6 @@
     }
     .speaker-btn:hover { transform: scale(1.1); }
 
-    /* 聽音選圖 & 選字按鈕 */
     .choices-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -482,7 +477,7 @@
 <body>
 
   <div class="container">
-    <!-- ==================== 1. 開始遊戲畫面 ==================== -->
+    <!-- 1. 開始遊戲畫面 -->
     <div id="start-screen" class="overlay-screen">
       <h2 class="screen-title">
         <span class="zy-block"><span class="zy-char">寶</span><span class="zy-tone">ㄅㄠˇ</span></span>
@@ -536,7 +531,7 @@
       </button>
     </div>
 
-    <!-- ==================== 2. 寶可夢中心 ==================== -->
+    <!-- 2. 寶可夢中心 -->
     <div id="poke-center-screen" class="overlay-screen" style="display: none;">
       <div style="font-size: 3.5rem; margin-bottom: 10px;">🏥</div>
       <h2 style="color: #e63946; margin-bottom: 12px;">
@@ -577,7 +572,7 @@
       </button>
     </div>
 
-    <!-- ==================== 3. 主戰鬥舞台 ==================== -->
+    <!-- 3. 主戰鬥舞台 -->
     <div class="battle-field" id="battle-field">
       <div class="fx-layer" id="fx-layer"></div>
 
@@ -614,7 +609,7 @@
       </div>
     </div>
 
-    <!-- ==================== 4. 招式攻擊選單 ==================== -->
+    <!-- 4. 招式攻擊選單 -->
     <div class="attack-menu">
       <button class="move-btn active" id="btn-mode-normal" onclick="changeMode('normal')">
         <span id="move-name-normal">一般攻擊</span>
@@ -630,7 +625,7 @@
       </button>
     </div>
 
-    <!-- ==================== 5. 出題作答區域 ==================== -->
+    <!-- 5. 出題作答區域 -->
     <div class="question-panel">
       <div class="q-banner" id="q-category">題目類別</div>
       <div class="q-item-icon-box" id="q-image-box" style="display: none;"></div>
@@ -640,10 +635,10 @@
       </div>
     </div>
 
-    <!-- 選項按鈕 (一般攻擊 & 特殊攻擊) -->
+    <!-- 選項按鈕 -->
     <div id="quiz-choices" class="choices-grid"></div>
 
-    <!-- 填寫輸入框 (進化攻擊) -->
+    <!-- 填寫輸入框 -->
     <div id="spell-panel" class="spell-wrap" style="display: none;">
       <input type="text" id="spell-input" class="spell-input" placeholder="請輸入單字..." autocomplete="off" />
       <br>
@@ -728,7 +723,6 @@
       { name: zy("野","ㄧㄝˇ") + zy("生","ㄕㄥ") + zy("的","˙ㄉㄜ") + zy("炎","ㄧㄢˊ") + zy("兔","ㄊㄨˋ") + zy("兒","ㄦˊ"), dexId: 813 }
     ];
 
-    // ==================== 純英文單字卡產生器 ====================
     function makeWordCardSvg(wordText, bgColor = "#6366f1") {
       const len = wordText.length;
       const fontSize = len > 8 ? 16 : (len > 5 ? 20 : 25);
@@ -739,20 +733,24 @@
       </svg>`;
     }
 
-    // ==================== 修正後的 1~100 圖示生成函數 ====================
+    // 圖片載入失敗時的安全降級函式（徹底解決 ""/> 溢出問題）
+    function handleImgError(imgEl, wordText) {
+      imgEl.onerror = null;
+      const div = document.createElement('div');
+      div.innerHTML = makeWordCardSvg(wordText);
+      imgEl.replaceWith(div.firstElementChild);
+    }
+
     function getItemIconImg(item) {
       const id = item.id;
       const word = item.word;
 
-      // 1. 修正：關於 (17 about) 以及抽象字，直接呈現英文單字卡
-      const textOnlyIds = [9, 14, 16, 17, 26, 36, 39, 60, 95]; 
-      // 9:like, 14:have, 16:fun, 17:about, 26:can, 36:another, 39:use, 60:first, 95:then
+      const textOnlyIds = [9, 14, 16, 17, 26, 36, 39, 60, 95];
       if (textOnlyIds.includes(id)) {
         const bgColors = ["#4f46e5", "#0891b2", "#059669", "#d97706", "#dc2626", "#7c3aed"];
         return makeWordCardSvg(word, bgColors[id % bgColors.length]);
       }
 
-      // 2. 修正：三 (15 three)
       if (id === 15) {
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
           <rect x="5" y="5" width="90" height="90" rx="18" fill="#fef08a"/>
@@ -763,43 +761,31 @@
         </svg>`;
       }
 
-      // 3. 修正：身體 (23 body) - 人體軀幹線條
       if (id === 23) {
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
           <rect x="5" y="5" width="90" height="90" rx="18" fill="#e0e7ff"/>
-          <!-- 頭部 -->
           <circle cx="50" cy="22" r="10" fill="#4338ca"/>
-          <!-- 軀幹 -->
           <rect x="42" y="34" width="16" height="30" rx="6" fill="#4338ca"/>
-          <!-- 雙手 -->
           <line x1="42" y1="38" x2="24" y2="54" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
           <line x1="58" y1="38" x2="76" y2="54" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
-          <!-- 雙腳 -->
           <line x1="45" y1="62" x2="36" y2="88" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
           <line x1="55" y1="62" x2="64" y2="88" stroke="#4338ca" stroke-width="6" stroke-linecap="round"/>
         </svg>`;
       }
 
-      // 4. 修正：床 (27 bed) - 溫馨床鋪
       if (id === 27) {
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
           <rect x="5" y="5" width="90" height="90" rx="18" fill="#fdf2f8"/>
-          <!-- 床頭板 -->
           <rect x="14" y="28" width="10" height="48" rx="3" fill="#92400e"/>
           <rect x="76" y="44" width="10" height="32" rx="3" fill="#92400e"/>
-          <!-- 床墊本體 -->
           <rect x="20" y="46" width="60" height="22" rx="4" fill="#38bdf8"/>
-          <!-- 枕頭 -->
           <ellipse cx="32" cy="42" rx="8" ry="6" fill="#ffffff" stroke="#bae6fd" stroke-width="2"/>
-          <!-- 棉被 -->
           <path d="M42 46 L78 46 C79 46 80 47 80 48 L80 68 L42 68 Z" fill="#0284c7"/>
-          <!-- 床腳 -->
           <rect x="16" y="74" width="6" height="12" fill="#78350f"/>
           <rect x="78" y="74" width="6" height="12" fill="#78350f"/>
         </svg>`;
       }
 
-      // 5. 修正：原子筆 (18 pen)
       if (id === 18) {
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
           <rect x="5" y="5" width="90" height="90" rx="18" fill="#e0f2fe"/>
@@ -811,7 +797,6 @@
         </svg>`;
       }
 
-      // 6. 修正：橡皮擦 (21 eraser)
       if (id === 21) {
         return `<svg class="item-icon-img" viewBox="0 0 100 100">
           <rect x="5" y="5" width="90" height="90" rx="18" fill="#fdf2f8"/>
@@ -825,7 +810,6 @@
         </svg>`;
       }
 
-      // 其餘單字使用精確 Twemoji 具體實物圖標
       const EMOJI_MAP = {
         1: "1f96b", 2: "1f30a", 3: "1f987", 4: "1f431", 5: "1f9e2",
         6: "1f9b5", 7: "1f468", 8: "2728", 10: "1f440", 11: "1f506",
@@ -849,12 +833,12 @@
 
       const code = EMOJI_MAP[id];
       if (code) {
-        return `<img class="item-icon-img" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${code}.png" alt="${word}" onerror="this.outerHTML='${makeWordCardSvg(word).replace(/'/g, "\\'")}'" />`;
+        // 使用安全乾淨的 onerror 函式呼叫
+        return `<img class="item-icon-img" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${code}.png" alt="${word}" onerror="handleImgError(this, '${word}')" />`;
       }
       return makeWordCardSvg(word);
     }
 
-    // ==================== 1~100 單字資料庫 ====================
     const WORD_DATABASE = [
       { id: 1, word: "jam", zh: zy("果","ㄍㄨㄛˇ") + zy("醬","ㄐㄧㄤˋ") },
       { id: 2, word: "dam", zh: zy("水","ㄕㄨㄟˇ") + zy("壩","ㄅㄚˋ") },
@@ -915,7 +899,7 @@
       { id: 57, word: "dip", zh: zy("沾","ㄓㄢ") + zy("醬","ㄐㄧㄤˋ") },
       { id: 58, word: "celebration", zh: zy("慶","ㄑㄧㄥˋ") + zy("祝","ㄓㄨˋ") },
       { id: 59, word: "costume", zh: zy("服","ㄈㄨˊ") + zy("裝","ㄓㄨㄤ") },
-      { id: 60, word: "first", zh: zy("第","ㄉㄧˋ") + zy("一","ㄧ") + zy("個","ㄍㄜ˙") },
+      { id: 60, word: "first", zy: zy("第","ㄉㄧˋ") + zy("一","ㄧ") + zy("個","ㄍㄜ˙") },
       { id: 61, word: "green", zh: zy("綠","ㄌㄩˋ") + zy("色","ㄙㄜˋ") },
       { id: 62, word: "envelope", zh: zy("信","ㄒㄧㄣˋ") + zy("封","ㄈㄥ") },
       { id: 63, word: "dragon", zh: zy("龍","ㄌㄨㄥˊ") },
@@ -1282,5 +1266,3 @@
   </script>
 </body>
 </html>
-
-```
