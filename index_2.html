@@ -77,6 +77,1414 @@
       justify-content: center; /* 垂直居中 */
       align-items: center;
       margin-left: 1.5px;
+      font-size: 1.55em; /* 聲符加大 */
+      font-weight: 900;
+      color: #1a1a1a;
+      line-height: 1;
+      transform: translateY(1.5px); /* 往下一點精準垂直置中 */
+      font-family: 'BiauKai', 'DFKai-SB', sans-serif;
+    }
+
+    /* 圖卡內部專用注音增強樣式：防止色卡背景（如淺黃、淺綠、高飽和紅）吃色看不清 */
+    .card-zy-label .zy-char,
+    .card-zy-label-large .zy-char {
+      color: #ffffff;
+      text-shadow: 0 0 3px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .card-zy-label .zy-body,
+    .card-zy-label-large .zy-body,
+    .card-zy-label .zy-tone-col,
+    .card-zy-label-large .zy-tone-col {
+      color: #ffffff;
+      text-shadow: 0 0 3px rgba(0,0,0,0.9), 0 1px 2px #000;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 全屏視窗：開始畫面與寶可夢中心 */
+    .overlay-screen {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .screen-title {
+      font-size: 1.85rem;
+      color: #e63946;
+      margin-bottom: 16px;
+    }
+
+    .starter-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .starter-card {
+      border: 3px solid #dee2e6;
+      border-radius: 16px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: white;
+      width: 110px;
+    }
+    .starter-card:hover { transform: translateY(-4px); }
+    .starter-card.selected {
+      border-color: #e63946;
+      box-shadow: 0 6px 16px rgba(230, 57, 70, 0.35);
+      background: #fff5f5;
+    }
+    .starter-img { width: 75px; height: 75px; object-fit: contain; margin: 0 auto 6px; display: block; }
+
+    .range-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+      font-weight: bold;
+    }
+    .range-input {
+      width: 65px;
+      padding: 6px 8px;
+      font-size: 1.1rem;
+      text-align: center;
+      border: 2px solid #adb5bd;
+      border-radius: 8px;
+    }
+
+    .btn-main {
+      background: #e63946;
+      color: white;
+      border: none;
+      padding: 12px 34px;
+      border-radius: 30px;
+      font-size: 1.25rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+      box-shadow: 0 6px 14px rgba(230, 57, 70, 0.4);
+    }
+    .btn-main:hover { background: #d62828; transform: scale(1.05); }
+
+    /* 戰鬥舞台 */
+    .battle-field {
+      background: linear-gradient(180deg, #bde0fe 0%, #a2d2ff 60%, #74c69d 60%, #40916c 100%);
+      border-radius: 20px;
+      border: 4px solid #f1faee;
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.15);
+      padding: 14px 18px;
+      height: 230px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .fx-layer {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .fighter-side {
+      width: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 5;
+    }
+    .fighter-hud {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #ced4da;
+      border-radius: 12px;
+      padding: 4px 8px;
+      width: 100%;
+      margin-bottom: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    .hp-container {
+      width: 100%;
+      height: 9px;
+      background: #dee2e6;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .hp-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--hp-green);
+      transition: width 0.5s ease-out;
+    }
+
+    .poke-img-box {
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 8px 6px rgba(0,0,0,0.25));
+      position: relative;
+      transition: transform 0.3s;
+    }
+    .poke-official-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .idle-bounce { animation: idle 2.5s infinite ease-in-out; }
+    @keyframes idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+    /* 招式動畫 */
+    .anim-iron-tail { animation: iron-tail 0.8s ease; }
+    @keyframes iron-tail {
+      0% { transform: translateX(0) rotate(0deg); }
+      30% { transform: translateY(-40px) rotate(-180deg) scale(1.1); }
+      70% { transform: translateX(120px) rotate(360deg) scale(1.2); }
+      100% { transform: translateX(0) rotate(0deg); }
+    }
+    .anim-thunder-jolt { animation: thunder-jolt 0.7s ease; }
+    @keyframes thunder-jolt {
+      0%, 100% { transform: translateX(0); filter: drop-shadow(0 8px 6px rgba(0,0,0,0.25)); }
+      20%, 60% { transform: translateX(30px) scale(1.1); filter: drop-shadow(0 0 15px #ffd60a) brightness(1.4); }
+      40%, 80% { transform: translateX(20px) scale(1.05); filter: drop-shadow(0 0 25px #ffb703) brightness(1.7); }
+    }
+    .anim-thunder-sky { animation: thunder-sky 2.4s ease; }
+    @keyframes thunder-sky {
+      0% { transform: scale(1); }
+      20% { transform: translateY(-30px) scale(1.25); filter: drop-shadow(0 0 25px #ffd60a) brightness(1.6); }
+      70% { transform: translateY(-35px) scale(1.3); filter: drop-shadow(0 0 40px #ffea00) brightness(2); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .anim-tackle { animation: tackle-dash 0.6s ease; }
+    @keyframes tackle-dash {
+      0% { transform: translateX(0); }
+      40% { transform: translateX(130px) scale(1.15) skewX(-15deg); }
+      100% { transform: translateX(0); }
+    }
+    .anim-hyper-voice { animation: hyper-voice 0.8s ease; }
+    @keyframes hyper-voice {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-15px) scale(0.95); }
+      50% { transform: translateX(35px) scale(1.2); }
+      100% { transform: translateX(0); }
+    }
+    .anim-moon-blast { animation: moon-blast 2.4s ease; }
+    @keyframes moon-blast {
+      0% { transform: scale(1); }
+      25% { transform: translateY(-35px) scale(1.25); filter: drop-shadow(0 0 25px #ff758f) brightness(1.5); }
+      75% { transform: translateY(-40px) scale(1.3); filter: drop-shadow(0 0 35px #ffb3c6) brightness(1.8); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .anim-scratch { animation: scratch-rush 0.65s ease; }
+    @keyframes scratch-rush {
+      0% { transform: translateX(0); }
+      30% { transform: translateX(80px) rotate(15deg); }
+      60% { transform: translateX(120px) rotate(-15deg) scale(1.15); }
+      100% { transform: translateX(0); }
+    }
+    .anim-flamethrower { animation: flamethrower 0.8s ease; }
+    @keyframes flamethrower {
+      0% { transform: scale(1); }
+      20% { transform: scale(1.2) translateX(-10px); filter: drop-shadow(0 0 15px #ff4800); }
+      50% { transform: scale(1.1) translateX(40px); filter: drop-shadow(0 0 25px #ff7900) brightness(1.5); }
+      100% { transform: scale(1); }
+    }
+    .anim-fire-blast { animation: fire-blast 2.4s ease; }
+    @keyframes fire-blast {
+      0% { transform: scale(1); }
+      25% { transform: translateY(-35px) scale(1.3); filter: drop-shadow(0 0 30px #d00000) brightness(1.6); }
+      75% { transform: translateY(-40px) scale(1.35); filter: drop-shadow(0 0 45px #ff4800) brightness(2); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    .enemy-attack-forward { animation: enemy-atk 0.6s ease; }
+    @keyframes enemy-atk {
+      0% { transform: translateX(0); }
+      40% { transform: translateX(-120px) scale(1.15); }
+      100% { transform: translateX(0); }
+    }
+    .got-hit { animation: hurt 0.5s ease; }
+    @keyframes hurt {
+      0%, 100% { filter: drop-shadow(0 8px 6px rgba(0,0,0,0.25)); }
+      25%, 75% { filter: brightness(3) saturate(0); transform: translateX(8px); }
+      50% { transform: translateX(-8px); }
+    }
+    .faint-away { animation: faint 0.7s forwards ease; }
+    @keyframes faint { 100% { transform: translateY(40px) scale(0.2); opacity: 0; } }
+
+    .fx-thunder-sky {
+      background: rgba(255, 255, 255, 0.85);
+      animation: thunder-sky-flash 0.3s 4 ease-in-out;
+    }
+    @keyframes thunder-sky-flash { 0%, 100% { opacity: 0; } 50% { opacity: 0.85; } }
+
+    .fx-fire-blast-bg {
+      background: radial-gradient(circle, rgba(255,72,0,0.7) 0%, rgba(208,0,0,0.85) 100%);
+      animation: fire-bg-flash 1.6s ease;
+    }
+    @keyframes fire-bg-flash { 0% { opacity: 0; } 30%, 80% { opacity: 0.9; } 100% { opacity: 0; } }
+
+    .fx-moon-blast-bg {
+      background: radial-gradient(circle, rgba(255,182,193,0.75) 0%, rgba(199,125,255,0.85) 100%);
+      animation: moon-bg-flash 1.6s ease;
+    }
+    @keyframes moon-bg-flash { 0% { opacity: 0; } 30%, 80% { opacity: 0.9; } 100% { opacity: 0; } }
+
+    /* 招式選單 */
+    .attack-menu {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .move-btn {
+      flex: 1;
+      padding: 10px 4px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: #f8f9fa;
+      color: #343a40;
+      transition: all 0.2s;
+    }
+    .move-btn.active {
+      background: #e63946;
+      color: white;
+      box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+    }
+    .move-btn small { display: block; font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+
+    /* 題目區塊 */
+    .question-panel {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .q-banner {
+      display: inline-block;
+      background: #457b9d;
+      color: white;
+      padding: 2px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .q-main {
+      font-size: 1.6rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    
+    /* 題目圖卡容器（回歸純置中，加入點擊效果與指標） */
+    .q-item-icon-box {
+      width: 150px;
+      height: 150px;
+      margin: 6px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.15s ease;
+    }
+    .q-item-icon-box:active {
+      transform: scale(0.97);
+    }
+
+    .item-card-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .speaker-btn {
+      background: #ffb703;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+    .speaker-btn:hover { transform: scale(1.1); }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .choice-btn {
+      background: white;
+      border: 2px solid #dee2e6;
+      border-radius: 16px;
+      padding: 10px 8px;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 110px;
+      transition: all 0.2s;
+    }
+    .choice-btn:hover { border-color: var(--primary); background: #fff5f5; }
+    .choice-btn.correct { background: #d8f3dc !important; border-color: #2ec4b6 !important; }
+    .choice-btn.wrong { background: #ffe3e3 !important; border-color: #e71d36 !important; }
+
+    .choice-icon-wrap {
+      width: 76px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .spell-wrap { margin: 10px 0; }
+    .spell-input {
+      font-size: 1.4rem;
+      padding: 8px 16px;
+      width: 65%;
+      max-width: 260px;
+      border: 2px solid #adb5bd;
+      border-radius: 10px;
+      text-align: center;
+      outline: none;
+      text-transform: lowercase;
+    }
+    .spell-input:focus { border-color: var(--primary); }
+    .btn-attack-confirm {
+      margin-top: 10px;
+      background: #e63946;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .battle-msg {
+      min-height: 38px;
+      margin-top: 10px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .battle-msg.win { color: #2ec4b6; }
+    .battle-msg.lose { color: #e71d36; }
+
+    /* 圖卡內部樣式 */
+    .word-card-box {
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      border: 2.5px solid rgba(255,255,255,0.45);
+    }
+    .card-id-tag {
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      background: rgba(0,0,0,0.35);
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .card-emoji-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      margin-top: 3px;
+      margin-bottom: 4px;
+    }
+    .card-zy-label {
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-zy-label-large {
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .svg-graphic {
+      width: 50px;
+      height: 50px;
+    }
+
+    /* 題目圖卡特大號樣式 */
+    .q-item-icon-box .card-emoji-icon {
+      font-size: 4rem;
+      margin-bottom: 8px;
+    }
+    .q-item-icon-box .svg-graphic {
+      width: 82px;
+      height: 82px;
+      margin-bottom: 4px;
+    }
+    .q-item-icon-box .card-zy-label {
+      font-size: 1.4rem;
+    }
+    .q-item-icon-box .card-zy-label-large {
+      font-size: 1.7rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- 1. 開始遊戲畫面 -->
+    <div id="start-screen" class="overlay-screen">
+      <h2 class="screen-title" id="game-title-header">寶可夢單字大對決</h2>
+
+      <p style="font-weight: bold; margin-bottom: 12px; color:#495057;" id="starter-prompt-header">
+        請選擇初始夥伴：
+      </p>
+
+      <div class="starter-group">
+        <div class="starter-card selected" onclick="selectStarter('pikachu', this)">
+          <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu" />
+          <div id="label-starter-pika">皮卡丘</div>
+        </div>
+        <div class="starter-card" onclick="selectStarter('eevee', this)">
+          <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png" alt="Eevee" />
+          <div id="label-starter-eevee">伊布</div>
+        </div>
+        <div class="starter-card" onclick="selectStarter('charmander', this)">
+          <img class="starter-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="Charmander" />
+          <div id="label-starter-char">小火龍</div>
+        </div>
+      </div>
+
+      <div class="range-group">
+        <span id="label-range-title">單字範圍：</span>
+        <input type="number" id="range-start" class="range-input" value="1" min="1" max="100"/>
+        <span>~</span>
+        <input type="number" id="range-end" class="range-input" value="25" min="1" max="100"/>
+        <span id="label-range-unit">號</span>
+      </div>
+
+      <button class="btn-main" onclick="startGame()" id="btn-start-game">
+        出發冒險！
+      </button>
+    </div>
+
+    <!-- 2. 寶可夢中心 -->
+    <div id="poke-center-screen" class="overlay-screen" style="display: none;">
+      <div style="font-size: 3.5rem; margin-bottom: 10px;">🏥</div>
+      <h2 style="color: #e63946; margin-bottom: 12px;" id="poke-center-title">寶可夢中心</h2>
+      <p style="font-size: 1.25rem; font-weight: bold; margin-bottom: 24px; color: #495057;" id="poke-center-msg">
+        寶可夢體力耗盡了！<br>
+        喬伊小姐已為你恢復全部元氣！
+      </p>
+      <button class="btn-main" onclick="returnToStart()" id="btn-retry-game">
+        重新挑戰
+      </button>
+    </div>
+
+    <!-- 3. 主戰鬥舞台 -->
+    <div class="battle-field" id="battle-field">
+      <div class="fx-layer" id="fx-layer"></div>
+
+      <!-- 玩家寶可夢 -->
+      <div class="fighter-side">
+        <div class="fighter-hud">
+          <div class="hud-header">
+            <span id="player-hud-name">皮卡丘</span>
+            <span style="color:#e63946;">Lv.25</span>
+          </div>
+          <div class="hp-container">
+            <div id="player-hp-bar" class="hp-fill"></div>
+          </div>
+        </div>
+        <div class="poke-img-box idle-bounce" id="player-sprite-box">
+          <img id="player-img" class="poke-official-img" src="" alt="Player Pokemon" />
+        </div>
+      </div>
+
+      <!-- 對手野生寶可夢 -->
+      <div class="fighter-side">
+        <div class="fighter-hud">
+          <div class="hud-header">
+            <span id="enemy-hud-name">野生寶可夢</span>
+            <span style="color:#6c757d;">Lv.20</span>
+          </div>
+          <div class="hp-container">
+            <div id="enemy-hp-bar" class="hp-fill"></div>
+          </div>
+        </div>
+        <div class="poke-img-box" id="enemy-sprite-box">
+          <img id="enemy-img" class="poke-official-img" src="" alt="Enemy Pokemon" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 招式攻擊選單（第三種攻擊更名為「進化攻擊」） -->
+    <div class="attack-menu">
+      <button class="move-btn active" id="btn-mode-normal" onclick="changeMode('normal')">
+        <span id="move-name-normal">一般攻擊</span>
+        <small>(一般: 扣1/5血)</small>
+      </button>
+      <button class="move-btn" id="btn-mode-special" onclick="changeMode('special')">
+        <span id="move-name-special">特殊攻擊</span>
+        <small>(特殊: 扣1/4血)</small>
+      </button>
+      <button class="move-btn" id="btn-mode-evo" onclick="changeMode('evo')">
+        <span id="move-name-evo">進化攻擊</span>
+        <small>(進化: 扣1/2血)</small>
+      </button>
+    </div>
+
+    <!-- 5. 出題作答區域 -->
+    <div class="question-panel">
+      <div class="q-banner" id="q-category">題目類別</div>
+      
+      <!-- 圖卡區域（位置回歸中央，點擊可直接朗讀發音） -->
+      <div class="q-item-icon-box" id="q-image-box" onclick="speakCurrentWord()" title="點擊發音" style="display: none;"></div>
+
+      <!-- 第一種攻擊（聽音選圖）之文字發音題目列 -->
+      <div class="q-main" id="q-main-box">
+        <span id="q-prompt"></span>
+        <button id="q-voice-btn" class="speaker-btn" onclick="speakCurrentWord()">🔊</button>
+      </div>
+    </div>
+
+    <!-- 選項按鈕 -->
+    <div id="quiz-choices" class="choices-grid"></div>
+
+    <!-- 填寫輸入框 -->
+    <div id="spell-panel" class="spell-wrap" style="display: none;">
+      <input type="text" id="spell-input" class="spell-input" placeholder="請輸入英文單字..." autocomplete="off" />
+      <br>
+      <button class="btn-attack-confirm" onclick="checkSpelling()" id="btn-evo-attack">
+        使出進化大絕！
+      </button>
+    </div>
+
+    <div id="battle-message" class="battle-msg"></div>
+  </div>
+
+  <script>
+    // ==================== 國小標準右側聲符注音引擎（聲符加大與精準垂直置中） ====================
+    function formatZhWithBopomofo(raw) {
+      return raw.replace(/([一-龥])\(([^)]+)\)/g, (match, char, zyStr) => {
+        let tone = '';
+        let symbols = zyStr.trim();
+
+        if (symbols.includes('˙')) {
+          tone = '˙';
+          symbols = symbols.replace(/˙/g, '');
+          const bodyHtml = `<span class="light-tone">˙</span>` + symbols.split('').map(s => `<span>${s}</span>`).join('');
+          return `<span class="zy-unit"><span class="zy-char">${char}</span><span class="zy-side"><span class="zy-body">${bodyHtml}</span></span></span>`;
+        }
+
+        const toneMatch = symbols.match(/[ˊˇˋ]/);
+        if (toneMatch) {
+          tone = toneMatch[0];
+          symbols = symbols.replace(/[ˊˇˋ]/g, '');
+        }
+
+        const bodyHtml = symbols.split('').map(s => `<span>${s}</span>`).join('');
+        const toneHtml = tone ? `<span class="zy-tone-col">${tone}</span>` : '';
+
+        return `<span class="zy-unit"><span class="zy-char">${char}</span><span class="zy-side"><span class="zy-body">${bodyHtml}</span>${toneHtml}</span></span>`;
+      });
+    }
+
+    function getOfficialArtUrl(dexId) {
+      return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${dexId}.png`;
+    }
+
+    const POKEMON_CONFIG = {
+      pikachu: {
+        dexId: 25,
+        evoDexId: 26,
+        nameHtml: formatZhWithBopomofo("皮(ㄆㄧˊ)卡(ㄎㄚˇ)丘(ㄑㄧㄡ)"),
+        normalMove: formatZhWithBopomofo("鐵(ㄊㄧㄝˇ)尾(ㄨㄟˇ)"),
+        specialMove: formatZhWithBopomofo("電(ㄉㄧㄢˋ)擊(ㄐㄧˊ)"),
+        evoMove: formatZhWithBopomofo("雷(ㄌㄟˊ)丘(ㄑㄧㄡ)") + "·" + formatZhWithBopomofo("打(ㄉㄚˇ)雷(ㄌㄟˊ)"),
+        normalAnim: 'anim-iron-tail',
+        specialAnim: 'anim-thunder-jolt',
+        evoAnim: 'anim-thunder-sky'
+      },
+      eevee: {
+        dexId: 133,
+        evoDexId: 700,
+        nameHtml: formatZhWithBopomofo("伊(ㄧ)布(ㄅㄨˋ)"),
+        normalMove: formatZhWithBopomofo("撞(ㄓㄨㄤˋ)擊(ㄐㄧˊ)"),
+        specialMove: formatZhWithBopomofo("巨(ㄐㄩˋ)聲(ㄕㄥ)光(ㄍㄨㄤ)線(ㄒㄧㄢˋ)"),
+        evoMove: formatZhWithBopomofo("仙(ㄒㄧㄢ)子(ㄗˇ)伊(ㄧ)布(ㄅㄨˋ)") + "·" + formatZhWithBopomofo("月(ㄩㄝˋ)亮(ㄌㄧㄤˋ)之(ㄓ)力(ㄌㄧˋ)"),
+        normalAnim: 'anim-tackle',
+        specialAnim: 'anim-hyper-voice',
+        evoAnim: 'anim-moon-blast'
+      },
+      charmander: {
+        dexId: 4,
+        evoDexId: 6,
+        nameHtml: formatZhWithBopomofo("小(ㄒㄧㄠˇ)火(ㄏㄨㄛˇ)龍(ㄌㄨㄥˊ)"),
+        normalMove: formatZhWithBopomofo("爪(ㄓㄠˇ)擊(ㄐㄧˊ)"),
+        specialMove: formatZhWithBopomofo("噴(ㄆㄣ)射(ㄕㄜˋ)火(ㄏㄨㄛˇ)焰(ㄧㄢˋ)"),
+        evoMove: formatZhWithBopomofo("噴(ㄆㄣ)火(ㄏㄨㄛˇ)龍(ㄌㄨㄥˊ)") + "·" + formatZhWithBopomofo("大(ㄉㄚˋ)字(ㄗˋ)爆(ㄅㄠˋ)炎(ㄧㄢˊ)"),
+        normalAnim: 'anim-scratch',
+        specialAnim: 'anim-flamethrower',
+        evoAnim: 'anim-fire-blast'
+      }
+    };
+
+    const WILD_ENEMIES = [
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)甲(ㄐㄧㄚˇ)賀(ㄏㄜˋ)忍(ㄖㄣˇ)蛙(ㄨㄚ)"), dexId: 658 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)路(ㄌㄨˋ)卡(ㄎㄚˇ)利(ㄌㄧˋ)歐(ㄡ)"), dexId: 448 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)超(ㄔㄠ)夢(ㄇㄥˋ)"), dexId: 150 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)夢(ㄇㄥˋ)幻(ㄏㄨㄢˋ)"), dexId: 151 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)噴(ㄆㄣ)火(ㄏㄨㄛˇ)龍(ㄌㄨㄥˊ)"), dexId: 6 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)耿(ㄍㄥˇ)鬼(ㄍㄨㄟˇ)"), dexId: 94 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)卡(ㄎㄚˇ)比(ㄅㄧˇ)獸(ㄕㄡˋ)"), dexId: 143 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)伊(ㄧ)布(ㄅㄨˋ)"), dexId: 133 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)胖(ㄆㄤˋ)丁(ㄉㄧㄥ)"), dexId: 39 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)可(ㄎㄜˇ)達(ㄉㄚˊ)鴨(ㄧㄚ)"), dexId: 54 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)波(ㄅㄛ)加(ㄐㄧㄚ)曼(ㄇㄢˋ)"), dexId: 393 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)木(ㄇㄨˋ)木(ㄇㄨˋ)梟(ㄒㄧㄠ)"), dexId: 722 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)水(ㄕㄨㄟˇ)箭(ㄐㄧㄢˋ)龜(ㄍㄨㄟ)"), dexId: 9 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)妙(ㄇㄧㄠˋ)蛙(ㄨㄚ)種(ㄓㄨㄥˇ)子(ㄗˇ)"), dexId: 1 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)烈(ㄌㄧㄝˋ)空(ㄎㄨㄥ)坐(ㄗㄨㄛˋ)"), dexId: 384 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)烈(ㄌㄧㄝˋ)咬(ㄧㄠˇ)陸(ㄌㄨˋ)鯊(ㄕㄚ)"), dexId: 445 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)波(ㄅㄛ)克(ㄎㄜˋ)比(ㄅㄧˇ)"), dexId: 175 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)謎(ㄇㄧˊ)擬(ㄋㄧˇ)Ｑ(ㄎㄧㄡ)"), dexId: 778 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)喵(ㄇㄧㄠ)喵(ㄇㄧㄠ)"), dexId: 52 },
+      { name: formatZhWithBopomofo("野(ㄧㄝˇ)生(ㄕㄥ)的(˙ㄉㄜ)炎(ㄧㄢˊ)兔(ㄊㄨˋ)兒(ㄦˊ)"), dexId: 813 }
+    ];
+
+    const GRADIENTS = [
+      "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+      "linear-gradient(135deg, #10b981, #047857)",
+      "linear-gradient(135deg, #f59e0b, #d97706)",
+      "linear-gradient(135deg, #ef4444, #b91c1c)",
+      "linear-gradient(135deg, #8b5cf6, #6d28d9)",
+      "linear-gradient(135deg, #ec4899, #be185d)",
+      "linear-gradient(135deg, #06b6d4, #0e7490)",
+      "linear-gradient(135deg, #84cc16, #4d7c0f)",
+      "linear-gradient(135deg, #6366f1, #4338ca)"
+    ];
+
+    const EMOJI_ICON_MAP = {
+      1: "🥫", 2: "🌊", 3: "🦇", 4: "🐱", 5: "🧢",
+      7: "👨", 8: "✨", 10: "👀", 11: "🐥", 12: "🦋",
+      13: "🐸", 24: "👂", 25: "👁️", 26: "🥫", 28: "🔴",
+      29: "🩺", 30: "🥅", 31: "🧒", 32: "🍲", 33: "👥",
+      34: "✉", 35: "🔍", 37: "😋", 38: "🍿", 40: "👨‍⚕",
+      41: "📦", 42: "🎡", 43: "🎒", 44: "⭕", 45: "🔺",
+      46: "▭", 47: "⬛", 48: "👃", 49: "🧠", 50: "✋",
+      51: "🐘", 52: "⛏", 53: "🥣", 54: "🔨", 55: "🥊",
+      56: "👕", 57: "🫗", 58: "🎉", 59: "🎭", 61: "🟢",
+      62: "💌", 63: "🐉", 64: "🎈", 65: "⚪", 66: "🔵",
+      67: "🏘", 68: "🥚", 69: "👨", 70: "👩", 71: "👴",
+      72: "👵", 73: "👅", 74: "🌱", 75: "🌸", 76: "🪓",
+      77: "🧷", 78: "🔥", 79: "🍲", 80: "🦊", 81: "📦",
+      82: "🧹", 83: "🪵", 84: "🐶", 85: "🫂", 86: "🐛",
+      87: "☀", 88: "🏃", 89: "🪵", 90: "🌷", 91: "🥤",
+      92: "🛖", 93: "🚩", 94: "☯️", 96: "👧", 97: "👦",
+      98: "🍃", 99: "🪢", 100: "🛒"
+    };
+
+    function getItemCardHtml(item) {
+      const id = item.id;
+      const zhHtml = item.zh;
+      const bg = GRADIENTS[id % GRADIENTS.length];
+
+      if (id === 20) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #f87171, #dc2626);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <path d="M18 24 C34 18 48 22 50 28 C52 22 66 18 82 24 L82 74 C66 68 52 72 50 78 C48 72 34 68 18 74 Z" fill="#991b1b"/>
+            <path d="M22 28 C36 22 47 25 49 31 L49 75 C47 69 36 66 22 72 Z" fill="#ffffff"/>
+            <path d="M78 28 C64 22 53 25 51 31 L51 75 C53 69 64 66 78 72 Z" fill="#ffffff"/>
+            <line x1="50" y1="28" x2="50" y2="78" stroke="#7f1d1d" stroke-width="2.5"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 6) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #34d399, #059669);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <circle cx="35" cy="22" r="8" fill="#ffffff"/>
+            <path d="M35 32 L35 54 L70 54 L70 82" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <rect x="36" y="46" width="34" height="16" rx="6" fill="#fef08a" opacity="0.6" stroke="#ffffff" stroke-width="2"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 18) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <path d="M26 74 L68 22 L80 34 L38 86 Z" fill="#ffffff"/>
+            <polygon points="26,74 16,88 38,86" fill="#0f172a"/>
+            <circle cx="18" cy="86" r="2.5" fill="#38bdf8"/>
+            <line x1="58" y1="28" x2="72" y2="42" stroke="#0284c7" stroke-width="3"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 19) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #fbbf24, #d97706);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <polygon points="32,70 66,22 78,34 44,82" fill="#ffffff"/>
+            <polygon points="32,70 20,86 44,82" fill="#78350f"/>
+            <polygon points="20,86 24,80 28,84" fill="#000"/>
+            <rect x="68" y="18" width="10" height="16" rx="3" transform="rotate(45 68 18)" fill="#fb7185"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 21) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #f472b6, #db2777);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <g transform="rotate(-20 50 48)">
+              <polygon points="22,34 52,20 82,38 52,52" fill="#ffffff"/>
+              <polygon points="22,34 52,52 52,70 22,52" fill="#3b82f6"/>
+              <polygon points="52,52 82,38 82,56 52,70" fill="#1d4ed8"/>
+              <polygon points="22,44 52,62 52,70 22,52" fill="#ef4444"/>
+              <polygon points="52,62 82,46 82,56 52,70" fill="#b91c1c"/>
+            </g>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 15) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #facc15, #ca8a04);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <text x="50" y="55" font-size="48" font-weight="900" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">3</text>
+            <circle cx="32" cy="78" r="5" fill="#ffffff"/>
+            <circle cx="50" cy="78" r="5" fill="#ffffff"/>
+            <circle cx="68" cy="78" r="5" fill="#ffffff"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 23) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #818cf8, #4f46e5);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <circle cx="50" cy="20" r="9" fill="#ffffff"/>
+            <rect x="43" y="31" width="14" height="26" rx="5" fill="#ffffff"/>
+            <line x1="43" y1="35" x2="26" y2="48" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+            <line x1="57" y1="35" x2="74" y2="48" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+            <line x1="46" y1="56" x2="38" y2="78" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+            <line x1="54" y1="56" x2="62" y2="78" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 27) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #c084fc, #9333ea);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <rect x="16" y="28" width="8" height="46" rx="3" fill="#ffffff"/>
+            <rect x="76" y="42" width="8" height="32" rx="3" fill="#ffffff"/>
+            <rect x="22" y="44" width="56" height="20" rx="4" fill="#67e8f9"/>
+            <ellipse cx="32" cy="40" rx="7" ry="5" fill="#ffffff"/>
+            <path d="M42 44 L76 44 C77 44 78 45 78 46 L78 64 L42 64 Z" fill="#0284c7"/>
+            <rect x="18" y="70" width="5" height="10" fill="#ffffff"/>
+            <rect x="77" y="70" width="5" height="10" fill="#ffffff"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (id === 22) {
+        return `<div class="word-card-box" style="background: linear-gradient(135deg, #fde047, #eab308);">
+          <span class="card-id-tag">#${id}</span>
+          <svg class="svg-graphic" viewBox="0 0 100 100">
+            <rect x="16" y="40" width="68" height="20" rx="3" fill="#ffffff" transform="rotate(-18 50 50)"/>
+            <line x1="30" y1="41" x2="30" y2="47" stroke="#ca8a04" stroke-width="2"/>
+            <line x1="42" y1="37" x2="42" y2="43" stroke="#ca8a04" stroke-width="2"/>
+            <line x1="54" y1="33" x2="54" y2="39" stroke="#ca8a04" stroke-width="2"/>
+            <line x1="66" y1="29" x2="66" y2="35" stroke="#ca8a04" stroke-width="2"/>
+          </svg>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      if (EMOJI_ICON_MAP[id]) {
+        return `<div class="word-card-box" style="background: ${bg};">
+          <span class="card-id-tag">#${id}</span>
+          <div class="card-emoji-icon">${EMOJI_ICON_MAP[id]}</div>
+          <div class="card-zy-label">${zhHtml}</div>
+        </div>`;
+      }
+
+      return `<div class="word-card-box" style="background: ${bg};">
+        <span class="card-id-tag">#${id}</span>
+        <div class="card-zy-label-large">${zhHtml}</div>
+      </div>`;
+    }
+
+    // ==================== 1~100 單字資料庫 ====================
+    const RAW_WORDS = [
+      { id: 1, word: "jam", zh: "果(ㄍㄨㄛˇ)醬(ㄐㄧㄤˋ)" },
+      { id: 2, word: "dam", zh: "水(ㄕㄨㄟˇ)壩(ㄅㄚˋ)" },
+      { id: 3, word: "bat", zh: "蝙(ㄅㄧㄢ)蝠(ㄈㄨˊ)" },
+      { id: 4, word: "cat", zh: "貓(ㄇㄠ)咪(ㄇㄧ)" },
+      { id: 5, word: "cap", zh: "帽(ㄇㄠˋ)子(˙ㄗ)" },
+      { id: 6, word: "lap", zh: "大(ㄉㄚˋ)腿(ㄊㄨㄟˇ)部(ㄅㄨˋ)" },
+      { id: 7, word: "man", zh: "男(ㄋㄢˊ)人(ㄖㄣˊ)" },
+      { id: 8, word: "new", zh: "新(ㄒㄧㄣ)的(˙ㄉㄜ)" },
+      { id: 9, word: "like", zh: "像(ㄒㄧㄤˋ)是(ㄕˋ)" },
+      { id: 10, word: "see", zh: "看(ㄎㄢˋ)" },
+      { id: 11, word: "little", zh: "小(ㄒㄧㄠˇ)的(˙ㄉㄜ)" },
+      { id: 12, word: "butterfly", zh: "蝴(ㄏㄨˊ)蝶(ㄉㄧㄝˊ)" },
+      { id: 13, word: "frog", zh: "青(ㄑㄧㄥ)蛙(ㄨㄚ)" },
+      { id: 14, word: "have", zh: "擁(ㄩㄥˇ)有(ㄧㄡˇ)" },
+      { id: 15, word: "three", zh: "三(ㄙㄢ)" },
+      { id: 16, word: "fun", zh: "好(ㄏㄠˇ)玩(ㄨㄢˊ)" },
+      { id: 17, word: "about", zh: "關(ㄍㄨㄢ)於(ㄩˊ)" },
+      { id: 18, word: "pen", zh: "原(ㄩㄢˊ)子(ㄗˇ)筆(ㄅㄧˇ)" },
+      { id: 19, word: "pencil", zh: "鉛(ㄑㄧㄢ)筆(ㄅㄧˇ)" },
+      { id: 20, word: "book", zh: "書(ㄕㄨ)本(ㄅㄣˇ)" },
+      { id: 21, word: "eraser", zh: "橡(ㄒㄧㄤˋ)皮(ㄆㄧˊ)擦(ㄘㄚ)" },
+      { id: 22, word: "ruler", zh: "尺(ㄔˇ)" },
+      { id: 23, word: "body", zh: "身(ㄕㄣ)體(ㄊㄧˇ)" },
+      { id: 24, word: "ear", zh: "耳(ㄦˇ)朵(˙ㄉㄨㄛ)" },
+      { id: 25, word: "eye", zh: "眼(ㄧㄢˇ)睛(˙ㄐㄧㄥ)" },
+      { id: 26, word: "can", zh: "罐(ㄍㄨㄢˋ)頭(˙ㄊㄡ)" },
+      { id: 27, word: "bed", zh: "床(ㄔㄨㄤˊ)" },
+      { id: 28, word: "red", zh: "紅(ㄏㄨㄥˊ)色(ㄙㄜˋ)" },
+      { id: 29, word: "vet", zh: "獸(ㄕㄡˋ)醫(ㄧ)" },
+      { id: 30, word: "net", zh: "網(ㄨㄤˇ)子(˙ㄗ)" },
+      { id: 31, word: "kid", zh: "小(ㄒㄧㄠˇ)朋(ㄆㄥˊ)友(ㄧㄡˇ)" },
+      { id: 32, word: "lid", zh: "蓋(ㄍㄞˋ)子(˙ㄗ)" },
+      { id: 33, word: "people", zh: "人(ㄖㄣˊ)們(˙ㄇㄣ)" },
+      { id: 34, word: "letter", zh: "信(ㄒㄧㄣˋ)" },
+      { id: 35, word: "look", zh: "看(ㄎㄢˋ)" },
+      { id: 36, word: "another", zh: "另(ㄌㄧㄥˋ)一(ㄧ)個(˙ㄍㄜ)" },
+      { id: 37, word: "delicious", zh: "美(ㄇㄟˇ)味(ㄨㄟˋ)" },
+      { id: 38, word: "snack", zh: "點(ㄉㄧㄢˇ)心(ㄒㄧㄣ)" },
+      { id: 39, word: "use", zh: "用(ㄩㄥˋ)" },
+      { id: 40, word: "doctor", zh: "醫(ㄧ)生(ㄕㄥ)" },
+      { id: 41, word: "package", zh: "包(ㄅㄠ)裹(ㄍㄨㄛˇ)" },
+      { id: 42, word: "carnival", zh: "嘉(ㄐㄧㄚ)年(ㄋㄧㄢˊ)華(ㄏㄨㄚˊ)" },
+      { id: 43, word: "backpack", zh: "後(ㄏㄡˋ)背(ㄅㄟ)包(ㄅㄠ)" },
+      { id: 44, word: "circle", zh: "圓(ㄩㄢˊ)形(ㄒㄧㄥˊ)" },
+      { id: 45, word: "triangle", zh: "三(ㄙㄢ)角(ㄐㄧㄠˇ)形(ㄒㄧㄥˊ)" },
+      { id: 46, word: "rectangle", zh: "長(ㄔㄤˊ)方(ㄈㄤ)形(ㄒㄧㄥˊ)" },
+      { id: 47, word: "square", zh: "正(ㄓㄥˋ)方(ㄈㄤ)形(ㄒㄧㄥˊ)" },
+      { id: 48, word: "nose", zh: "鼻(ㄅㄧˊ)子(˙ㄗ)" },
+      { id: 49, word: "sense", zh: "感(ㄍㄢˇ)官(ㄍㄨㄢ)" },
+      { id: 50, word: "skin", zh: "皮(ㄆㄧˊ)膚(ㄈㄨ)" },
+      { id: 51, word: "big", zh: "大(ㄉㄚˋ)的(˙ㄉㄜ)" },
+      { id: 52, word: "dig", zh: "挖(ㄨㄚ)" },
+      { id: 53, word: "mix", zh: "攪(ㄐㄧㄠˇ)拌(ㄅㄢˋ)" },
+      { id: 54, word: "fix", zh: "修(ㄒㄧㄡ)理(ㄌㄧˇ)" },
+      { id: 55, word: "hit", zh: "打(ㄉㄚˇ)" },
+      { id: 56, word: "fit", zh: "合(ㄏㄜˊ)適(ㄕˋ)" },
+      { id: 57, word: "dip", zh: "沾(ㄓㄢ)醬(ㄐㄧㄤˋ)" },
+      { id: 58, word: "celebration", zh: "慶(ㄑㄧㄥˋ)祝(ㄓㄨˋ)" },
+      { id: 59, word: "costume", zh: "服(ㄈㄨˊ)裝(ㄓㄨㄤ)" },
+      { id: 60, word: "first", zh: "第(ㄉㄧˋ)一(ㄧ)個(˙ㄍㄜ)" },
+      { id: 61, word: "green", zh: "綠(ㄌㄩˋ)色(ㄙㄜˋ)" },
+      { id: 62, word: "envelope", zh: "信(ㄒㄧㄣˋ)封(ㄈㄥ)" },
+      { id: 63, word: "dragon", zh: "龍(ㄌㄨㄥˊ)" },
+      { id: 64, word: "parade", zh: "遊(ㄧㄡˊ)行(ㄒㄧㄥˊ)" },
+      { id: 65, word: "white", zh: "白(ㄅㄞˊ)色(ㄙㄜˋ)" },
+      { id: 66, word: "blue", zh: "藍(ㄌㄢˊ)色(ㄙㄜˋ)" },
+      { id: 67, word: "community", zh: "社(ㄕㄜˋ)區(ㄑㄩ)" },
+      { id: 68, word: "oval", zh: "橢(ㄊㄨㄛˇ)圓(ㄩㄢˊ)形(ㄒㄧㄥˊ)" },
+      { id: 69, word: "father", zh: "爸(ㄅㄚˋ)爸(˙ㄅㄚ)" },
+      { id: 70, word: "mother", zh: "媽(ㄇㄚ)媽(˙ㄇㄚ)" },
+      { id: 71, word: "grandfather", zh: "爺(ㄧㄝˊ)爺(˙ㄧㄝ)" },
+      { id: 72, word: "grandmother", zh: "奶(ㄋㄞˇ)奶(˙ㄋㄞ)" },
+      { id: 73, word: "tongue", zh: "舌(ㄕㄜˊ)頭(˙ㄊㄡ)" },
+      { id: 74, word: "grow", zh: "成(ㄔㄥˊ)長(ㄓㄤˇ)" },
+      { id: 75, word: "flower", zh: "花(ㄏㄨㄚ)" },
+      { id: 76, word: "rip", zh: "撕(ㄙ)開(ㄎㄞ)" },
+      { id: 77, word: "pin", zh: "別(ㄅㄧㄝˊ)針(ㄓㄣ)" },
+      { id: 78, word: "hot", zh: "熱(ㄖㄜˋ)的(˙ㄉㄜ)" },
+      { id: 79, word: "pot", zh: "鍋(ㄍㄨㄛ)子(˙ㄗ)" },
+      { id: 80, word: "fox", zh: "狐(ㄏㄨˊ)狸(˙ㄌㄧ)" },
+      { id: 81, word: "box", zh: "箱(ㄒㄧㄤ)子(˙ㄗ)" },
+      { id: 82, word: "mop", zh: "拖(ㄊㄨㄛ)把(ㄅㄚˇ)" },
+      { id: 83, word: "log", zh: "木(ㄇㄨˋ)塊(ㄎㄨㄞˋ)" },
+      { id: 84, word: "dog", zh: "狗(ㄍㄡˇ)" },
+      { id: 85, word: "hug", zh: "擁(ㄩㄥˇ)抱(ㄅㄠˋ)" },
+      { id: 86, word: "bug", zh: "昆(ㄎㄨㄣ)蟲(ㄔㄨㄥˊ)" },
+      { id: 87, word: "sun", zh: "太(ㄊㄞˋ)陽(ㄧㄤˊ)" },
+      { id: 88, word: "run", zh: "跑(ㄆㄠˇ)" },
+      { id: 89, word: "mud", zh: "泥(ㄋㄧˊ)巴(˙ㄅㄚ)" },
+      { id: 90, word: "bud", zh: "花(ㄏㄨㄚ)苞(ㄅㄠ)" },
+      { id: 91, word: "cup", zh: "杯(ㄅㄟ)子(˙ㄗ)" },
+      { id: 92, word: "hut", zh: "小(ㄒㄧㄠˇ)屋(ㄨ)" },
+      { id: 93, word: "country", zh: "國(ㄍㄨㄛˊ)家(ㄐㄧㄚ)" },
+      { id: 94, word: "symbol", zh: "象(ㄒㄧㄤˋ)徵(ㄓㄥ)" },
+      { id: 95, word: "then", zh: "然(ㄖㄢˊ)後(ㄏㄡˋ)" },
+      { id: 96, word: "sister", zh: "姊(ㄐㄧㄝˇ)妹(ㄇㄟˋ)" },
+      { id: 97, word: "brother", zh: "兄(ㄒㄧㄨㄥ)弟(ㄉㄧˋ)" },
+      { id: 98, word: "leaf", zh: "葉(ㄧㄝˋ)子(˙ㄗ)" },
+      { id: 99, word: "pull", zh: "拉(ㄌㄚ)" },
+      { id: 100, word: "push", zh: "推(ㄊㄨㄟ)" }
+    ];
+
+    const WORD_DATABASE = RAW_WORDS.map(w => ({
+      id: w.id,
+      word: w.word,
+      zh: formatZhWithBopomofo(w.zh)
+    }));
+
+    // 初始化頁面預設文字
+    document.getElementById('game-title-header').innerHTML = formatZhWithBopomofo("寶(ㄅㄠˇ)可(ㄎㄜˇ)夢(ㄇㄥˋ)單(ㄉㄢ)字(ㄗˋ)大(ㄉㄚˋ)對(ㄉㄨㄟˋ)決(ㄐㄩㄝˊ)");
+    document.getElementById('starter-prompt-header').innerHTML = formatZhWithBopomofo("請(ㄑㄧㄥˇ)選(ㄒㄩㄢˇ)擇(ㄗㄜˊ)初(ㄔㄨ)始(ㄕˇ)夥(ㄏㄨㄛˇ)伴(ㄅㄢˋ)：");
+    document.getElementById('label-starter-pika').innerHTML = formatZhWithBopomofo("皮(ㄆㄧˊ)卡(ㄎㄚˇ)丘(ㄑㄧㄡ)");
+    document.getElementById('label-starter-eevee').innerHTML = formatZhWithBopomofo("伊(ㄧ)布(ㄅㄨˋ)");
+    document.getElementById('label-starter-char').innerHTML = formatZhWithBopomofo("小(ㄒㄧㄠˇ)火(ㄏㄨㄛˇ)龍(ㄌㄨㄥˊ)");
+    document.getElementById('label-range-title').innerHTML = formatZhWithBopomofo("單(ㄉㄢ)字(ㄗˋ)範(ㄈㄢˋ)圍(ㄨㄟˊ)：");
+    document.getElementById('label-range-unit').innerHTML = formatZhWithBopomofo("號(ㄏㄠˋ)");
+    document.getElementById('btn-start-game').innerHTML = formatZhWithBopomofo("出(ㄔㄨ)發(ㄈㄚ)冒(ㄇㄠˋ)險(ㄒㄧㄢˇ)！");
+    document.getElementById('poke-center-title').innerHTML = formatZhWithBopomofo("寶(ㄅㄠˇ)可(ㄎㄜˇ)夢(ㄇㄥˋ)中(ㄓㄨㄥ)心(ㄒㄧㄣ)");
+    document.getElementById('poke-center-msg').innerHTML = formatZhWithBopomofo("寶(ㄅㄠˇ)可(ㄎㄜˇ)夢(ㄇㄥˋ)體(ㄊㄧˇ)力(ㄌㄧˋ)耗(ㄏㄠˋ)盡(ㄐㄧㄣˋ)了(˙ㄌㄜ)！") + "<br>" + formatZhWithBopomofo("喬(ㄑㄧㄠˊ)伊(ㄧ)小(ㄒㄧㄠˇ)姐(ㄐㄧㄝˇ)已(ㄧˇ)為(ㄨㄟˊ)你(ㄋㄧˇ)恢(ㄏㄨㄟ)復(ㄈㄨˋ)全(ㄑㄩㄢˊ)部(ㄅㄨˋ)元(ㄩㄢˊ)氣(ㄑㄧˋ)！");
+    document.getElementById('btn-retry-game').innerHTML = formatZhWithBopomofo("重(ㄔㄨㄥˊ)新(ㄒㄧㄣ)挑(ㄊㄧㄠˇ)戰(ㄓㄢˋ)");
+    document.getElementById('btn-evo-attack').innerHTML = formatZhWithBopomofo("使(ㄕˇ)出(ㄔㄨ)進(ㄐㄧㄣˋ)化(ㄏㄨㄚˋ)大(ㄉㄚˋ)絕(ㄐㄩㄝˊ)！");
+
+    const SFX = {
+      ctx: null,
+      init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+      play(freq, type, duration) {
+        this.init();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        g.gain.setValueAtTime(0.12, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      },
+      attackHit() {
+        this.play(280, 'square', 0.1);
+        setTimeout(() => this.play(140, 'sawtooth', 0.2), 70);
+      },
+      thunderHit() {
+        this.play(120, 'sawtooth', 0.4);
+        setTimeout(() => this.play(80, 'sawtooth', 0.6), 150);
+        setTimeout(() => this.play(60, 'sawtooth', 0.8), 350);
+      },
+      playerDamage() {
+        this.play(190, 'sawtooth', 0.15);
+        setTimeout(() => this.play(95, 'triangle', 0.25), 100);
+      }
+    };
+
+    let selectedStarterKey = 'pikachu';
+    let currentMode = 'normal';
+    let activeWordList = [];
+    let currentWordIndex = 0;
+    let playerHp = 100;
+    let enemyHp = 100;
+
+    function selectStarter(key, el) {
+      selectedStarterKey = key;
+      document.querySelectorAll('.starter-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function startGame() {
+      const startNum = parseInt(document.getElementById('range-start').value) || 1;
+      const endNum = parseInt(document.getElementById('range-end').value) || 25;
+      
+      const minId = Math.max(1, Math.min(startNum, endNum));
+      const maxId = Math.min(100, Math.max(startNum, endNum));
+
+      activeWordList = WORD_DATABASE.filter(w => w.id >= minId && w.id <= maxId);
+      if (activeWordList.length === 0) activeWordList = WORD_DATABASE.slice(0, 10);
+      activeWordList.sort(() => Math.random() - 0.5);
+
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('poke-center-screen').style.display = 'none';
+
+      const conf = POKEMON_CONFIG[selectedStarterKey];
+      document.getElementById('player-hud-name').innerHTML = conf.nameHtml;
+      document.getElementById('move-name-normal').innerHTML = conf.normalMove;
+      document.getElementById('move-name-special').innerHTML = conf.specialMove;
+      document.getElementById('move-name-evo').innerHTML = formatZhWithBopomofo("進(ㄐㄧㄣˋ)化(ㄏㄨㄚˋ)攻(ㄍㄨㄥ)擊(ㄐㄧˊ)");
+      document.getElementById('player-img').src = getOfficialArtUrl(conf.dexId);
+
+      playerHp = 100;
+      updatePlayerHpUI();
+
+      spawnNewEnemy();
+      currentWordIndex = 0;
+      renderCurrentQuestion();
+    }
+
+    function returnToStart() {
+      document.getElementById('poke-center-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'flex';
+    }
+
+    function spawnNewEnemy() {
+      enemyHp = 100;
+      updateEnemyHpUI();
+      const wild = WILD_ENEMIES[Math.floor(Math.random() * WILD_ENEMIES.length)];
+      document.getElementById('enemy-hud-name').innerHTML = wild.name;
+      document.getElementById('enemy-img').src = getOfficialArtUrl(wild.dexId);
+    }
+
+    function changeMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.move-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`btn-mode-${mode}`).classList.add('active');
+
+      document.getElementById('quiz-choices').style.display = (mode === 'evo') ? 'none' : 'grid';
+      document.getElementById('spell-panel').style.display = (mode === 'evo') ? 'block' : 'none';
+
+      renderCurrentQuestion();
+    }
+
+    function speakCurrentWord() {
+      const item = activeWordList[currentWordIndex];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(item.word);
+        utter.lang = 'en-US';
+        utter.rate = 0.82;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function renderCurrentQuestion() {
+      const item = activeWordList[currentWordIndex];
+      const feedback = document.getElementById('battle-message');
+      feedback.innerHTML = '';
+      feedback.className = 'battle-msg';
+
+      document.getElementById('q-category').innerHTML = `${formatZhWithBopomofo("第(ㄉㄧˋ)")} ${item.id} ${formatZhWithBopomofo("號(ㄏㄠˋ)")}`;
+      
+      const imgBox = document.getElementById('q-image-box');
+      const prompt = document.getElementById('q-prompt');
+      const voiceBtn = document.getElementById('q-voice-btn');
+      const qMainBox = document.getElementById('q-main-box');
+
+      if (currentMode === 'normal') {
+        // 第一種：聽音選圖（隱藏中央大圖卡，展示提示文字列與發音鈕）
+        imgBox.style.display = 'none';
+        qMainBox.style.display = 'flex';
+        prompt.innerHTML = `🎧 ${formatZhWithBopomofo("請(ㄑㄧㄥˇ)聽(ㄊㄧㄥ)發(ㄈㄚ)音(ㄧㄣ)選(ㄒㄩㄢˇ)圖(ㄊㄨˊ)")}`;
+        voiceBtn.style.display = 'inline-flex';
+        speakCurrentWord();
+        renderChoices(item, 'image');
+      } 
+      else if (currentMode === 'special') {
+        // 第二種：特殊攻擊（展示正中央圖卡，點擊圖卡即可發音，隱藏文字行）
+        imgBox.style.display = 'flex';
+        imgBox.innerHTML = `<div class="item-card-wrap">${getItemCardHtml(item)}</div>`;
+        qMainBox.style.display = 'none';
+        renderChoices(item, 'word');
+      } 
+      else if (currentMode === 'evo') {
+        // 第三種：進化攻擊（展示正中央圖卡，點擊圖卡即可發音，隱藏文字行）
+        imgBox.style.display = 'flex';
+        imgBox.innerHTML = `<div class="item-card-wrap">${getItemCardHtml(item)}</div>`;
+        qMainBox.style.display = 'none';
+        document.getElementById('spell-input').value = '';
+        document.getElementById('spell-input').focus();
+      }
+    }
+
+    function renderChoices(currentItem, displayType) {
+      const container = document.getElementById('quiz-choices');
+      container.innerHTML = '';
+
+      let pool = activeWordList.filter(w => w.id !== currentItem.id).sort(() => Math.random() - 0.5).slice(0, 3);
+      let options = [...pool, currentItem].sort(() => Math.random() - 0.5);
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        if (displayType === 'image') {
+          btn.innerHTML = `<div class="choice-icon-wrap">${getItemCardHtml(opt)}</div>`;
+        } else {
+          btn.textContent = opt.word;
+        }
+        btn.onclick = () => onAnswer(btn, opt.id === currentItem.id);
+        container.appendChild(btn);
+      });
+    }
+
+    function onAnswer(btn, isCorrect) {
+      document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+      const item = activeWordList[currentWordIndex];
+
+      if (isCorrect) {
+        if (btn) btn.classList.add('correct');
+        handleSuccessAttack();
+      } else {
+        if (btn) btn.classList.add('wrong');
+        handlePlayerHurt(item.word);
+      }
+    }
+
+    function checkSpelling() {
+      const input = document.getElementById('spell-input').value.trim().toLowerCase();
+      const currentWord = activeWordList[currentWordIndex].word.toLowerCase();
+
+      if (input === currentWord) {
+        handleSuccessAttack();
+      } else {
+        handlePlayerHurt(currentWord);
+      }
+    }
+
+    document.getElementById('spell-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') checkSpelling();
+    });
+
+    function handleSuccessAttack() {
+      const conf = POKEMON_CONFIG[selectedStarterKey];
+      const playerSprite = document.getElementById('player-sprite-box');
+      const playerImg = document.getElementById('player-img');
+      const enemySprite = document.getElementById('enemy-sprite-box');
+      const fxLayer = document.getElementById('fx-layer');
+      const feedback = document.getElementById('battle-message');
+
+      let damage = 20;
+      let moveText = conf.normalMove;
+      let animDuration = 1000;
+
+      if (currentMode === 'normal') {
+        damage = 20;
+        moveText = conf.normalMove;
+        playerSprite.classList.add(conf.normalAnim);
+        SFX.attackHit();
+        animDuration = 1000;
+      } else if (currentMode === 'special') {
+        damage = 25;
+        moveText = conf.specialMove;
+        playerSprite.classList.add(conf.specialAnim);
+        SFX.attackHit();
+        animDuration = 1100;
+      } else if (currentMode === 'evo') {
+        damage = 50;
+        moveText = conf.evoMove;
+        animDuration = 2600;
+
+        playerImg.src = getOfficialArtUrl(conf.evoDexId);
+        playerSprite.classList.add(conf.evoAnim);
+
+        if (selectedStarterKey === 'pikachu') {
+          fxLayer.className = 'fx-layer fx-thunder-sky';
+          SFX.thunderHit();
+        } else if (selectedStarterKey === 'charmander') {
+          fxLayer.className = 'fx-layer fx-fire-blast-bg';
+          SFX.thunderHit();
+        } else if (selectedStarterKey === 'eevee') {
+          fxLayer.className = 'fx-layer fx-moon-blast-bg';
+          SFX.thunderHit();
+        }
+      }
+
+      feedback.innerHTML = `💥 ${conf.nameHtml} ${formatZhWithBopomofo("使(ㄕˇ)出(ㄔㄨ)")} ${moveText}！${formatZhWithBopomofo("命(ㄇㄧㄥˋ)中(ㄓㄨㄥ)")}！`;
+      feedback.className = 'battle-msg win';
+
+      setTimeout(() => {
+        enemySprite.classList.add('got-hit');
+        enemyHp = Math.max(0, enemyHp - damage);
+        updateEnemyHpUI();
+      }, (currentMode === 'evo') ? 900 : 350);
+
+      setTimeout(() => {
+        if (currentMode === 'evo') {
+          playerImg.src = getOfficialArtUrl(conf.dexId);
+          fxLayer.className = 'fx-layer';
+        }
+        playerSprite.className = 'poke-img-box idle-bounce';
+        enemySprite.classList.remove('got-hit');
+
+        if (enemyHp <= 0) {
+          enemySprite.classList.add('faint-away');
+          setTimeout(() => {
+            enemySprite.classList.remove('faint-away');
+            spawnNewEnemy();
+            advanceNextWord();
+          }, 800);
+        } else {
+          advanceNextWord();
+        }
+      }, animDuration);
+    }
+
+    function handlePlayerHurt(correctAnswer) {
+      const enemySprite = document.getElementById('enemy-sprite-box');
+      const playerSprite = document.getElementById('player-sprite-box');
+      const feedback = document.getElementById('battle-message');
+
+      enemySprite.classList.add('enemy-attack-forward');
+      SFX.playerDamage();
+
+      feedback.innerHTML = `❌ ${formatZhWithBopomofo("答(ㄉㄚˊ)錯(ㄘㄨㄛˋ)了(˙ㄌㄜ)")}！${formatZhWithBopomofo("正(ㄓㄥˋ)確(ㄑㄩㄝˋ)")}：${correctAnswer}`;
+      feedback.className = 'battle-msg lose';
+
+      setTimeout(() => {
+        playerSprite.classList.add('got-hit');
+        playerHp = Math.max(0, playerHp - 33.34);
+        updatePlayerHpUI();
+      }, 300);
+
+      setTimeout(() => {
+        enemySprite.classList.remove('enemy-attack-forward');
+        playerSprite.classList.remove('got-hit');
+
+        if (playerHp <= 1) {
+          playerSprite.classList.add('faint-away');
+          setTimeout(() => {
+            playerSprite.classList.remove('faint-away');
+            document.getElementById('poke-center-screen').style.display = 'flex';
+          }, 800);
+        } else {
+          advanceNextWord();
+        }
+      }, 1100);
+    }
+
+    function advanceNextWord() {
+      currentWordIndex++;
+      if (currentWordIndex >= activeWordList.length) {
+        activeWordList.sort(() => Math.random() - 0.5);
+        currentWordIndex = 0;
+      }
+      renderCurrentQuestion();
+    }
+
+    function updatePlayerHpUI() {
+      const bar = document.getElementById('player-hp-bar');
+      bar.style.width = `${playerHp}%`;
+      bar.style.background = playerHp > 40 ? 'var(--hp-green)' : 'var(--hp-danger)';
+    }
+
+    function updateEnemyHpUI() {
+      const bar = document.getElementById('enemy-hp-bar');
+      bar.style.width = `${enemyHp}%`;
+    }
+  </script>
+</body>
+</html>      justify-content: center;
+      vertical-align: middle;
+      margin: 0 1.5px;
+      line-height: 1;
+    }
+    .zy-char {
+      font-size: 1.15em;
+      line-height: 1;
+      display: inline-block;
+    }
+    .zy-side {
+      display: inline-flex;
+      align-items: center; /* 注音本體與聲符欄垂直置中 */
+      font-size: 0.54em;
+      margin-left: 2px;
+      user-select: none;
+      line-height: 1;
+    }
+    /* 注音符號直排欄 */
+    .zy-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -1px;
+      color: #2b2d42;
+      font-family: 'BiauKai', 'DFKai-SB', sans-serif;
+      font-weight: bold;
+    }
+    /* 輕聲（置於頂部中央） */
+    .zy-body .light-tone {
+      font-size: 1.45em;
+      font-weight: 900;
+      line-height: 0.55;
+      margin-bottom: 2px;
+    }
+    /* 聲調欄（二、三、四聲加大並居中、微調下移對齊） */
+    .zy-tone-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* 垂直居中 */
+      align-items: center;
+      margin-left: 1.5px;
       font-size: 1.55em; /* 聲符再加大 */
       font-weight: 900;
       color: #1a1a1a;
